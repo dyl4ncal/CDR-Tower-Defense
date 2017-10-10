@@ -11,7 +11,8 @@ public class Tile
     private int xCoordinate;
     private int yCoordinate;
     
-    public Tile(){}
+    public Tile()
+    {}
     
     public void setXCoordinate(int x)
     {
