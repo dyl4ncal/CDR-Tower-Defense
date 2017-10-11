@@ -1,36 +1,29 @@
-package entities;
-
 /**
  * This is a base class for defining the x & y
  * coordinates of locations on the map.
- * 
+ *
  * @author Dylan
  */
+
+package entities;
+
 public class Tile
 {
-    private int xCoordinate;
     private int yCoordinate;
+    private int xCoordinate;
     
-    public Tile()
-    {}
-    
-    public void setXCoordinate(int x)
+    public Tile(int y, int x)
     {
-        this.xCoordinate = x;
+        yCoordinate = y;
+        xCoordinate = x;
     }
-    
-    public void setYCoordinate(int y)
-    {
-        this.yCoordinate = y;
-    }
-    
-    public int getXCoordinate()
-    {
-        return this.xCoordinate;
-    }
-    
+
     public int getYCoordinate()
     {
-        return this.yCoordinate;
+        return yCoordinate;
+    }
+    public int getXCoordinate()
+    {
+        return xCoordinate;
     }
 }
