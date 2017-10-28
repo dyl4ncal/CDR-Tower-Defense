@@ -1,0 +1,10 @@
+O    SD   O    O    O    O    O    E    O    O    O    O
+O    D    O    R    R    D    O    U    O    O    O    O
+O    D    O    U    O    D    O    U    L    L    L    O
+O    D    O    U    O    D    O    O    O    O    U    O
+O    D    O    U    O    D    O    R    R    R    U    O
+O    D    O    U    O    D    O    U    O    O    O    O
+O    D    O    U    O    D    O    U    L    L    L    O
+O    D    O    U    O    D    O    O    O    O    U    O
+O    R    R    U    O    R    R    R    R    R    U    O
+O    O    O    O    O    O    O    O    O    O    O    O
