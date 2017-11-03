@@ -22,13 +22,16 @@ public class GameWindow extends JFrame
 
     private JFrame frame;
     private JPanel mapPanel, towerPanel, textPanel;
-    private JLabel healthLabel, healthNumLabel, moneyLabel, moneyNumLabel;
-    private JButton playButton, fastForwardButton;
+    private JLabel healthLabel, healthNumLabel; 
+    private JLabel moneyLabel, moneyNumLabel;
+    private JLabel roundLabel, roundNumLabel;
+    private JButton playButton;
     private JList towerList;
     private JScrollPane towerScroller;
     private MapComponent mapComponent;
     private MapData data;
     private Timer gameClock;
+    private int currentRound = 0;
 
     public GameWindow(MapData md)
     {
@@ -83,7 +86,7 @@ public class GameWindow extends JFrame
         towerPanel = new JPanel();
         towerPanel.setPreferredSize(new Dimension(105, 500));
         towerPanel.setLayout(new BoxLayout(towerPanel, BoxLayout.PAGE_AXIS));
-        towerPanel.setBackground(Color.GRAY);
+        towerPanel.setBackground(Color.DARK_GRAY);
         towerPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
 
         //Create and add components to towerPanel
@@ -92,17 +95,18 @@ public class GameWindow extends JFrame
         towerPanel.add(healthNumLabel, BorderLayout.PAGE_START);
         towerPanel.add(moneyLabel, BorderLayout.PAGE_START);
         towerPanel.add(moneyNumLabel, BorderLayout.PAGE_START);
+        towerPanel.add(roundLabel, BorderLayout.PAGE_START);
+        towerPanel.add(roundNumLabel, BorderLayout.PAGE_START);
         createList();
         towerPanel.add(towerScroller, BorderLayout.CENTER);
         createButtons();
         towerPanel.add(playButton, BorderLayout.PAGE_END);
-        towerPanel.add(fastForwardButton, BorderLayout.PAGE_END);
 
         //Make textPanel
         textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.PAGE_AXIS));
         textPanel.setBorder(BorderFactory.createEmptyBorder(31, 10, 30, 10));
-        textPanel.setBackground(Color.GRAY);
+        textPanel.setBackground(Color.DARK_GRAY);
     }
 
     private void createMapComponent()
@@ -112,16 +116,11 @@ public class GameWindow extends JFrame
             @Override
             public void mouseClicked(MouseEvent e) {
 
-                if(towerList.getSelectedValue().equals("Sell"))
+                if(towerList.getSelectedValue().equals("Sell tower"))
                 {
                     int x = e.getX() / 50;
                     int y = e.getY() / 50;
                     mapComponent.sellTower(y, x);
-
-                    if (data.getMoneyChanged())
-                    {
-                        moneyNumLabel.setText(String.format("$%d", data.getMoney()));
-                    }
                 }
 
                 else if (towerList.getSelectedValue() != null)
@@ -129,12 +128,12 @@ public class GameWindow extends JFrame
                     int x = e.getX() / 50;
                     int y = e.getY() / 50;
                     //Instead of Basic it will be towerList.getSelectedValue()
-                    mapComponent.setTile(new Tower(y, x, "Basic"), y, x);
+                    mapComponent.setTile(new Tower(y, x, (String) towerList.getSelectedValue()), y, x);
+                }
 
-                    if (data.getMoneyChanged())
-                    {
-                        moneyNumLabel.setText(String.format("$%d", data.getMoney()));
-                    }
+                else
+                {
+                    //
                 }
             }
 
@@ -177,8 +176,8 @@ public class GameWindow extends JFrame
         healthNumLabel.setMinimumSize(new Dimension(300, 20));
         healthNumLabel.setMaximumSize(new Dimension(300, 20));
         //This method creates the border around the label
-        healthNumLabel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.RED), healthNumLabel.getBorder()));
+        //healthNumLabel.setBorder(BorderFactory.createCompoundBorder(
+            //BorderFactory.createLineBorder(Color.RED), healthNumLabel.getBorder()));
 
         //Create moneyLabel
         moneyLabel = new JLabel("Money:");
@@ -195,14 +194,31 @@ public class GameWindow extends JFrame
         moneyNumLabel.setMinimumSize(new Dimension(600, 20));
         moneyNumLabel.setMaximumSize(new Dimension(600, 20));
         //This method creates the border around the label
-        moneyNumLabel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.GREEN), moneyNumLabel.getBorder()));
+        //moneyNumLabel.setBorder(BorderFactory.createCompoundBorder(
+            //BorderFactory.createLineBorder(Color.GREEN), moneyNumLabel.getBorder()));
+
+        //Create healthLabel
+        roundLabel = new JLabel("Round:");
+        roundLabel.setForeground(Color.ORANGE);
+        roundLabel.setFont(new Font(roundLabel.getFont().getName(), Font.PLAIN, 16));
+        roundLabel.setPreferredSize(new Dimension(95, 20));
+        roundLabel.setMinimumSize(new Dimension(300, 20));
+        roundLabel.setMaximumSize(new Dimension(300, 20));
+
+        //Create healthNumLabel
+        roundNumLabel = new JLabel(String.format("%d", currentRound + 1));
+        roundNumLabel.setForeground(Color.ORANGE);
+        roundNumLabel.setFont(new Font(roundNumLabel.getFont().getName(), Font.PLAIN, 16));
+        roundNumLabel.setMinimumSize(new Dimension(300, 20));
+        roundNumLabel.setMaximumSize(new Dimension(300, 20));
 
         //Will likely be placed on the left hand side (use RIGHT_ALIGNMENT)
         healthLabel.setAlignmentX(RIGHT_ALIGNMENT);
         healthNumLabel.setAlignmentX(RIGHT_ALIGNMENT);
         moneyLabel.setAlignmentX(RIGHT_ALIGNMENT);
         moneyNumLabel.setAlignmentX(RIGHT_ALIGNMENT);
+        roundLabel.setAlignmentX(RIGHT_ALIGNMENT);
+        roundNumLabel.setAlignmentX(RIGHT_ALIGNMENT);
     }
 
     private void createButtons()
@@ -211,76 +227,39 @@ public class GameWindow extends JFrame
         playButton.setMinimumSize(new Dimension(300, 25));
         playButton.setMaximumSize(new Dimension(300, 25));
 
-        fastForwardButton = new JButton("Faster");
-        fastForwardButton.setMinimumSize(new Dimension(300, 25));
-        fastForwardButton.setMaximumSize(new Dimension(300, 25));
-
         //This puts the buttons at the bottom of the tower panel
         playButton.setAlignmentX(CENTER_ALIGNMENT);
-        fastForwardButton.setAlignmentX(CENTER_ALIGNMENT);
 
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-                //If last enemy died
-                //Set button to play
-                if(gameClock.isRunning())
-                {
-                    gameClock.stop();
-                    playButton.setText("Play");
-                }
-
                 //Start a new round based on currentRound
-                //Current Round integer can be in Map Data
-                /*else if(playbutton.getText().equals("Play"))
+
+                if(playButton.getText().equals("Play"))
                 {
-                    createWave(currentRound);
-                    playbutton.setText("Fast");
+                    mapComponent.createWave(currentRound);
+                    roundNumLabel.setText(String.format("%d", currentRound + 1));
+                    gameClock.start();
+                    playButton.setText("Faster");
+                    gameClock.setDelay(80);
                 }
                 
                 //Slow the game clock down
-                else if(gameClock.getDelay() == 40)
+                else if(playButton.getText().equals("Slower"))
                 {
                     gameClock.setDelay(80);
-                    fastForwardButton.setText("Fast");
+                    playButton.setText("Faster");
                 }
 
                 //Speed the game clock back up
-                else
+                else if(playButton.getText().equals("Faster"))
                 {
                     gameClock.setDelay(40);
-                    fastForwardButton.setText("Slow");
-                }*/
-
-                else
-                {
-                    gameClock.start();
-                    playButton.setText("Pause");
+                    playButton.setText("Slower");
                 }
             }
         });
-
-        fastForwardButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0)
-            {
-                //Changes the speed at which the enemies move
-                //Also changed the speed of fast forwarding
-                //Made it 2x the speed instead of 5x the speed
-                if(gameClock.getDelay() == 40)
-                {
-                    gameClock.setDelay(80);
-                    fastForwardButton.setText("Faster");
-                }
-                else
-                {
-                    gameClock.setDelay(40);
-                    fastForwardButton.setText("Slower");
-                }
-            }
-        });
-
     }
 
     private void createList()
@@ -288,8 +267,10 @@ public class GameWindow extends JFrame
         DefaultListModel listModel = new DefaultListModel();
         //This will check if theres a tower in the cell, if there is sell it
         //For half of it's original cost
-        listModel.addElement("Sell");
-        listModel.addElement("Basic Tower");
+        listModel.addElement("Sell tower");
+        listModel.addElement("Basic");
+        listModel.addElement("Melee");
+        listModel.addElement("Sniper");
         towerList = new JList(listModel);
         towerList.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -318,18 +299,29 @@ public class GameWindow extends JFrame
 
                 mapComponent.repaint();
 
+                if(mapComponent.isRoundOver())
+                {
+                    playButton.setText("Play");
+                    currentRound++;
+                    data.incrementMoney(50 + (currentRound * 2));
+                }
+
                 if(data.getHealthChanged())
                 {
                     healthNumLabel.setText(String.format("%d", data.getHealth()));
                 }
 
-                //Runs infinitely
+                if (data.getMoneyChanged())
+                {
+                    moneyNumLabel.setText(String.format("$%d", data.getMoney()));
+                }
+
+                //Creates the game over window pop up
                 if(data.getHealth() == 0)
                 {
                     new GameOverWindow(data);
                     gameClock.stop();
                     frame.dispose();
-                    //data.decrementHealth();
                 }
             }
         };

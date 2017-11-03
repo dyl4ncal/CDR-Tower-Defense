@@ -37,6 +37,7 @@ public class MapComponent extends JComponent
     private int numEnemies;
     private int spawnFrequency;
     private boolean setupComplete = false;
+    private boolean roundOver = false;
 
     //Create a cell using rows, columns and MapData
     public MapComponent(MapData d)
@@ -62,6 +63,19 @@ public class MapComponent extends JComponent
     }
 
     public void setSetupComplete() {setupComplete = true;}
+    public boolean isRoundOver()
+    {
+        if(!roundOver)
+        {
+            return false;
+        }
+
+        else
+        {
+            roundOver = false;
+            return true;
+        }
+    }
 
     @Override
     public void paintComponent(Graphics g)
@@ -162,16 +176,38 @@ public class MapComponent extends JComponent
             enemyComponentList.get(i).update();
 
             //If enemy dies as a result of move, remove from list
+            //This will only work when it dies in the base
+            //Will need another statement checking if its in the last tile
             if (!enemyComponentList.get(i).isAlive())
             {
                 enemyComponentList.remove(i);
+                //Money gained will be a function of their maximum health
+                data.incrementMoney(8);
                 data.decrementHealth();
             }
+
             else
             {
                 i++;
             }
+            
+            //If there are no more enemies, the round is over
+            if(enemyComponentList.isEmpty())
+            {
+                roundOver = true;
+            }
         }
+    }
+
+    //This method creates a new wave of enemies depending on current round
+    public void createWave(int round)
+    {
+        enemiesSpawned = 0;
+        enemyTicker = 1;
+        //Should be a better function tbh
+        numEnemies = (round * 3) + 10;
+        spawnFrequency = 10;
+        drawEnemies((Graphics2D) getGraphics());
     }
 
     //Draws all the enemies on the map

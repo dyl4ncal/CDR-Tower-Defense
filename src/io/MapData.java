@@ -17,7 +17,6 @@ import static entities.Tile.TileType.TOWER;
 
 public class MapData
 {
-
     private Tile[][] tileMat;
     private int numRows;
     private int numCols;
@@ -25,7 +24,7 @@ public class MapData
     private int numEnemies = 10;
     private int spawnFrequency = 10;
     private int health = 100;
-    private int money = 1000000;
+    private int money = 600;
     private boolean healthChanged = false;
     private boolean moneyChanged = false;
 

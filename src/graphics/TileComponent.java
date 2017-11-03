@@ -1,6 +1,6 @@
 package graphics;
 
-import entities.Tile;
+import entities.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,9 +34,38 @@ public class TileComponent extends JComponent
             //we check the tower type and draw the correct tower
             case TOWER:
             {
-                g2.setColor(Color.YELLOW);
-                //Make the towers slightly smaller than the tile size
-                g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
+                Tower myTower = (Tower) myTile;
+                switch(myTower.getTowerType())
+                {
+                    case "Sniper":
+                    {
+                        g2.setColor(Color.GREEN);
+                         //Make the towers slightly smaller than the tile size
+                        g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
+                        break;
+                    }
+
+                    case "Basic":
+                    {
+                        g2.setColor(Color.YELLOW);
+                         //Make the towers slightly smaller than the tile size
+                        g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
+                        break;
+                    }
+
+                    case "Melee":
+                    {
+                        g2.setColor(Color.RED);
+                         //Make the towers slightly smaller than the tile size
+                        g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
+                        break;
+                    }
+
+                    default:
+                    {
+                        break;
+                    }
+                }
                 //Surround the tower with a border
                 g2.setColor(Color.BLACK);
                 g2.drawRect(myX+7, myY+7, mySize-15, mySize-15);
