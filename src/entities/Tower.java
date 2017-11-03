@@ -9,10 +9,11 @@ public class Tower extends Tile
 {
     private enum TowerType
     {
-        BASIC;
+        BASIC
     }
 
     private TowerType myType;
+    private int cost;
 
     public Tower(int x, int y, String type)
     {
@@ -22,6 +23,7 @@ public class Tower extends Tile
             default:
             {
                 myType = TowerType.BASIC;
+                cost = 200;
                 break;
             }
         }
@@ -31,6 +33,10 @@ public class Tower extends Tile
     public TileType getTileType() 
     {
         return TileType.TOWER;
+    }
+
+    public int getCost() {
+        return cost;
     }
 }
 

@@ -7,22 +7,20 @@ public class Enemy
     private int x = 0;
     private int y = 0;
     private int moveTicker = 0;
+    private int myHealth = 30;
     private Path.Direction lastDir;
     private Path.Direction currentDir;
     private boolean dirChanged;
-    private boolean isAlive;
-    private MapData mapData;
+    private boolean isAlive = true;
     private Path currentLocation;
 
     /*At the start, the enemy is given the head node/start tile.*/
-    public Enemy(MapData md)
+    public Enemy(Path head)
     {
-        mapData = md;
-        currentLocation = mapData.getHead();
+        currentLocation = head;
         currentDir = currentLocation.getMyDirection();
         lastDir = currentDir;
         setCoords();
-        isAlive = true;
     }
 
     public void move()
@@ -90,6 +88,7 @@ public class Enemy
 
     public int getX() {return x;}
     public int getY() {return y;}
+    public int getmyHalth() {return myHealth;}
     public boolean isAlive() {return isAlive;}
 
     private void setCoords()

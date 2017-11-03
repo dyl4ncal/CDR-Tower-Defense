@@ -12,28 +12,18 @@ import java.awt.geom.Ellipse2D;
 import javax.swing.JComponent;
 
 import entities.Enemy;
-import io.*;
+import entities.Path;
 
 public class EnemyComponent extends JComponent
 {   
     private Enemy myEnemy;
     
-    public EnemyComponent(MapData md)
+    public EnemyComponent(Path head)
     {
-        myEnemy = new Enemy(md);
+        myEnemy = new Enemy(head);
     }
 
-    //I dont think I need this, but I'll keep it here just because -RAYMOND
-    @Override
-    public void paintComponent(Graphics g)
-    {
-        Graphics2D g2 = (Graphics2D) g;
-
-        super.paintComponent(g);
-        drawEnemy(g);
-    }
-
-    public void drawEnemy(Graphics g)
+    public void draw(Graphics g)
     {
         Graphics2D g2 = (Graphics2D) g;
 
@@ -41,6 +31,8 @@ public class EnemyComponent extends JComponent
         Ellipse2D.Double e = new Ellipse2D.Double(myEnemy.getX() + 15, myEnemy.getY() +15, 20, 20);
         g2.setColor(Color.BLACK);
         g2.fill(e);
+        g2.setColor(Color.GREEN);
+        g2.drawString(String.format("%d", myEnemy.getmyHalth()), myEnemy.getX() + 18, myEnemy.getY() + 30);
     }
 
     public void update() {myEnemy.move();}

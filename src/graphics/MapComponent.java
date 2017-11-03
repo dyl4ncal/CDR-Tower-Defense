@@ -13,23 +13,29 @@ import java.io.File;
 import java.io.IOException;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import javax.swing.*;
 
+import entities.Path;
+import entities.Tile;
+import entities.Tower;
 import io.MapData;
+
+import static entities.Tile.TileType.TILE;
+import static entities.Tile.TileType.TOWER;
 
 public class MapComponent extends JComponent
 {
+    private static BufferedImage base, tile;
 
     private int x, y, s, mapRows, mapCols;
     private MapData data;
     private ArrayList<EnemyComponent> enemyComponentList;
+    private TileComponent[][] componentMat;
     private int enemyTicker = 1;
     private int enemiesSpawned = 0;
     private int numEnemies;
     private int spawnFrequency;
-    private BufferedImage base, tile;
     private boolean setupComplete = false;
 
     //Create a cell using rows, columns and MapData
@@ -41,127 +47,115 @@ public class MapComponent extends JComponent
         enemyComponentList = new ArrayList<>();
         numEnemies = d.getNumEnemies();
         spawnFrequency = d.getSpawnFrequency();
+
+        try
+        {
+            base = ImageIO.read(new File("cpu.png"));
+            tile = ImageIO.read(new File("background2.png"));
+        }
+        catch(IOException e)
+        {
+            throw new IllegalArgumentException("Image not found");
+        }
+
+        buildMatrix();
     }
 
     public void setSetupComplete() {setupComplete = true;}
 
-    //I'm not sure at the moment if this makes it repaint everything
-    //If it does, it's pretty costly
-    //since it already has to go through the 2D array twice
     @Override
     public void paintComponent(Graphics g)
     {
-        draw(g);
+        Graphics2D g2 = (Graphics2D) g;
 
-        //Don't paint enemies during setup
+        draw(g2);
+
         if (setupComplete)
         {
-            animateEnemy();
-            drawEnemies(g);
+            updateEnemies();
+            drawEnemies(g2);
         }
     }
 
-    private void draw(Graphics g)
+
+    //Not quite right yet
+    public void clockTick()
     {
-        Graphics2D g2 = (Graphics2D) g;
-        x = 0;
-        y = 0;
-        s = 50;
+        Graphics2D g2 = (Graphics2D) getGraphics();
+        drawPath(g2);
+        updateEnemies();
+        drawEnemies(g2);
+    }
 
-        /*THIS IS WHERE THE BACKGROUND IS BEING CREATED
-        *Sadly, it seems drawing image is very costly, at least for my
-        *laptop
-        **/
-        try
+    public void setTile(Tower t, int y, int x)
+    {
+        if (data.getTile(y, x).getTileType() == TILE && t.getCost() <= data.getMoney())
         {
-            base = ImageIO.read(new File("cpu.png"));
-            /*These make the background look cool, but on my laptop
-            *it makes it much slower than what it should be
-            **/
-            //tile = ImageIO.read(new File("background.jpg"));
-            //tile = ImageIO.read(new File("background1.jpg"));
-            tile = ImageIO.read(new File("background2.png"));
-            g2.drawImage(tile, x, y, null);
+            data.setTile(t, y, x);
+            componentMat[y][x] = new TileComponent(t, y * 50, x * 50);
+            componentMat[y][x].draw((Graphics2D) getGraphics());
+            data.decrementMoney(t.getCost());
         }
-        catch(IOException e){}
+    }
 
-        //This will draw the path cells
+    //This method will sell a tower and replace it with a tile
+    //Will return 1/4 of the cost back to the player
+    public void sellTower(int y, int x)
+    {
+        if(data.getTile(y, x).getTileType() == TOWER)
+        {
+            Tile t = new Tile(y, x);
+            data.setTile(t, y, x);
+            componentMat[y][x] = new TileComponent(t, y * 50, x * 50);
+            componentMat[y][x].draw((Graphics2D) getGraphics());
+            data.incrementMoney(50);
+        }
+    }
+
+    public static BufferedImage getBase() {return base;}
+    public static BufferedImage getTile() {return tile;}
+
+    private void buildMatrix()
+    {
+        componentMat = new TileComponent[mapRows][mapCols];
+
         for (int i = 0; i < mapRows; i++)
         {
-            y = s * i;
             for (int j = 0; j < mapCols; j++)
             {
-                x = s * j;
-                //Assume input data array is correct
-                switch(data.getTile(i,j).getTileType())
-                {
-                    //Draws the path enemies travel
-                    case PATH:
-                        g2.setColor(Color.WHITE);
-                        g2.fillRect(x, y, s, s);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        }
-
-        //This will draw the map cells
-        for (int i = 0; i < mapRows; i++)
-        {
-            y = s * i;
-            for (int j = 0; j < mapCols; j++)
-            {
-                x = s * j;
-                //Assume input data array is correct
-                switch(data.getTile(i,j).getTileType())
-                {
-                    //Draws tiles that a tower can go on
-                    case TILE:
-                        //g2.drawImage(tile, x, y, null);
-                        //g2.setColor(Color.GREEN);
-                        //g2.fillRect(x, y, s, s);
-                        //Outline it with black so it is clear where a tile is
-                        g2.setColor(Color.BLACK);
-                        g2.drawRect(x, y, s, s);
-                        break;
-
-                    //This draws the tile to represent the base
-                    case BASE:
-                        //Draws the cpu on the thing
-                        g2.drawImage(base, x, y, null);
-                        g2.setColor(Color.BLACK);
-                        g2.drawRect(x, y, s, s);
-                        /*g2.setColor(Color.MAGENTA);
-                        g2.fillRect(x, y, s, s);
-                        //Outline it with black so it is clear where a tile is
-                        g2.setColor(Color.BLACK);
-                        g2.drawRect(x, y, s, s);
-                        */
-                        //Draw a circle in it
-                        Ellipse2D.Double e = new Ellipse2D.Double(x+15, y+15, 20, 20);
-                        g2.setColor(Color.BLACK);
-                        g2.fill(e);
-                        break;
-
-                    //This draws the tile to represent towers
-                    case TOWER:
-                        g2.setColor(Color.YELLOW);
-                        g2.fillRect(x, y, s, s);
-                        //Outline it with black so it is clear where a tile is
-                        g2.setColor(Color.BLACK);
-                        g2.drawRect(x, y, s, s);
-                        break;
-
-                    default:
-                        break;
-                }
+                componentMat[i][j] = new TileComponent(data.getTile(i, j), i * 50, j * 50);
             }
         }
     }
 
-    private void animateEnemy()
+    private void draw(Graphics2D g2)
+    {
+        g2.drawImage(tile, 0, 0, null);
+
+        drawPath(g2);
+
+        //This will draw the non-path tiles
+        for (int i = 0; i < mapRows; i++)
+        {
+            for (int j = 0; j < mapCols; j++)
+            {
+                componentMat[i][j].draw(g2);
+            }
+        }
+    }
+
+    private void drawPath(Graphics2D g2)
+    {
+        Path path = data.getHead();
+
+        while(path != null)
+        {
+            componentMat[path.getY()][path.getX()].drawPath(g2);
+            path = path.getMyNext();
+        }
+    }
+
+    private void updateEnemies()
     {
         for(int i = 0; i < enemyComponentList.size();)
         {
@@ -189,7 +183,7 @@ public class MapComponent extends JComponent
         //without making this method think it must spawn more
         if (enemyTicker > 0 && (enemyTicker == spawnFrequency || enemiesSpawned == 0))
         {
-            enemyComponentList.add(new EnemyComponent(data));
+            enemyComponentList.add(new EnemyComponent(data.getHead()));
             enemiesSpawned++;
             enemyTicker = 1;
 
@@ -201,7 +195,7 @@ public class MapComponent extends JComponent
 
         for(int i = 0; i < enemyComponentList.size(); i++)
         {
-            enemyComponentList.get(i).drawEnemy(g);
+            enemyComponentList.get(i).draw(g);
         }
 
         if (enemyTicker > -1)

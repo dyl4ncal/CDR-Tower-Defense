@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import static entities.Path.Direction.*;
+import static entities.Tile.TileType.PATH;
+import static entities.Tile.TileType.TILE;
+import static entities.Tile.TileType.TOWER;
 
 public class MapData
 {
@@ -21,9 +24,10 @@ public class MapData
     private Path pathHead;
     private int numEnemies = 10;
     private int spawnFrequency = 10;
-    private int health = 10;
-    private int money = 1000;
+    private int health = 100;
+    private int money = 1000000;
     private boolean healthChanged = false;
+    private boolean moneyChanged = false;
 
     public MapData(Scanner in1, Scanner in2)
     {
@@ -43,9 +47,9 @@ public class MapData
         Tile.TileType newType = newTile.getTileType();
 
         //Can place tower on empty square (buying) or empty square on tower (selling)
-        if (newType != Tile.TileType.PATH && oldType != Tile.TileType.PATH &&
-                ((newType == Tile.TileType.TOWER && oldType == Tile.TileType.TILE) ||
-                        (newType == Tile.TileType.TILE && oldType == Tile.TileType.TOWER)))
+        if (newType != PATH && oldType != PATH &&
+                ((newType == TOWER && oldType == TILE) ||
+                        (newType == TILE && oldType == TOWER)))
         {
             tileMat[y][x] = newTile;
         }
@@ -55,9 +59,9 @@ public class MapData
     public int getNumRows() {return numRows;}
     public int getNumCols() {return numCols;}
     public int getNumEnemies() {return numEnemies;}
-    public int getSpawnFrequency() {return spawnFrequency;}
-
+    public int getSpawnFrequency(){return spawnFrequency;}
     public int getHealth() {return health;}
+
     public void decrementHealth()
     {
         health--;
@@ -77,8 +81,37 @@ public class MapData
         }
     }
 
-    public int getMoney() {return money;}
-    public void setMoney(int x) {money = x;}
+    public int getMoney()
+    {
+        return money;
+    }
+
+    public void decrementMoney(int x)
+    {
+        money -= x;
+        moneyChanged = true;
+    }
+
+    public void incrementMoney(int x)
+    {
+        money += x;
+        moneyChanged = true;
+    }
+
+    //Copy paste of getHealthChanged
+    //Has the same functionality
+    public boolean getMoneyChanged()
+    {
+        if (!moneyChanged)
+        {
+            return false;
+        }
+        else
+        {
+            moneyChanged = false;
+            return true;
+        }
+    }
 
     private void getGameData(Scanner in)
     {

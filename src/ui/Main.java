@@ -21,7 +21,7 @@ public class Main
         DataInput.getDataFile(args);
         MapData mapData = new MapData(DataInput.getIn1(), DataInput.getIn2());
 
-        MainMenu mainMenu = new MainMenu(mapData); 
+        MainMenu mainMenu = new MainMenu(mapData);
     }
 }
 
