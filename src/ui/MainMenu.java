@@ -101,7 +101,7 @@ public class MainMenu extends JFrame
         //Creates the title label
         title = new JLabel("CDR Tower Defense");
         title.setForeground(Color.CYAN);
-        title.setFont(new Font(title.getFont().getName(), Font.PLAIN, 32));
+        title.setFont(new Font(title.getFont().getName(), Font.ITALIC, 40));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
 

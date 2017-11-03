@@ -55,32 +55,32 @@ public class GameGuideWindow extends JFrame
     {
         //Creates the title label
         title = new JLabel("How to Play CDR Tower Defense:");
-        title.setForeground(Color.BLACK);
-        title.setFont(new Font(title.getFont().getName(), Font.ITALIC, 26));
+        title.setForeground(Color.CYAN);
+        title.setFont(new Font(title.getFont().getName(), Font.BOLD, 18));
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         //This defines the game guide's text instructions.
         String info = 
         "<html>" +  
         "1.) To start playing CDR Tower Defense, press 'Start' on the Main Menu!" + "<br />" + 
-        "<br />2.) After a game is started, you will find yourself inside a computer with a very" + "<br />" +
-        "important task! The computer's Central Processing Unit (CPU) is under attack by" + "<br />" + 
-        "malicious software! YOUR JOB IS TO PROTECT IT." + "<br />" + 
-        "<br />3.) Press 'Play' when you are up for the task! Immediately, enemies will begin" + "<br />" +
-        "making their way towards the computer's CPU by travelling along the electrical" + "<br />" + 
-        "circuits of the computer's motherboard. If enemies reach the CPU, it takes damage." + "<br />" + 
-        "<br />4.) Buy defenses from the right panel and place them on the circuit board" + "<br />" +
-        "by clicking a defense type and then clicking where you want it located. Selecting" + "<br />" +
-        "the 'Sell' option allows you to click a defense you own, and sell it for a fraction" + "<br />" + 
-        "of the price you payed for it originally. Another way to make $ is by attacking enemies." + "<br />" +
-        "<br />5.) If you are confident that the CPU is well protected and don't need to carefully plan" + "<br />" +
-        "anymore defensive moves, there is a 'Faster' button at the bottom right which speeds up time." + "<br />" +
-        "" + "<br />" +        
+        "<br />2.) After a game is started, you will find yourself inside a computer with a very "
+                + "important task! The computer's Central Processing Unit (CPU) is under attack by "
+                + "malicious software! YOUR JOB IS TO PROTECT IT." + "<br />" +
+        "<br />3.) Press 'Play' when you are up for the task! Immediately, enemies will begin making "
+                + "their way towards the computer's CPU by travelling along the electrical circuits of "
+                + "the computer's motherboard. If enemies reach the CPU, it takes damage." + "<br />" +
+        "<br />4.) Buy defenses from the right panel and place them on the circuit board by clicking a "
+                + "defense type and then clicking where you want it located. Selecting the 'Sell' option "
+                + "allows you to click a defense you own, and sell it for a fraction of the price you payed "
+                + "for it originally. Another way to make $ is by attacking enemies." + "<br />" +
+        "<br />5.) If you are confident that the CPU is well protected and don't need to carefully plan "
+                + "anymore defensive moves, there is a 'Faster' button at the bottom right which speeds up time." + "<br />" +
+        "<br />6.) Goodluck! This computer system is depending on you!" + "<br />" +        
         "</html>";
                 
                
         guideInfo = new JLabel(info);
-        guideInfo.setForeground(Color.BLUE);
+        guideInfo.setForeground(Color.ORANGE);
         guideInfo.setFont(new Font(title.getFont().getName(), Font.PLAIN, 14));
         guideInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
     }
@@ -96,6 +96,6 @@ public class GameGuideWindow extends JFrame
 
         //Adds the title to the frame
         guidePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        guidePanel.setBackground(Color.WHITE);
+        guidePanel.setBackground(Color.DARK_GRAY);
     }
 }
