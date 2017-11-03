@@ -2,7 +2,6 @@ package graphics;
 
 import entities.Tile;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;

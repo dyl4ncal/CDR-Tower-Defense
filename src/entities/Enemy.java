@@ -1,7 +1,5 @@
 package entities;
 
-import io.MapData;
-
 public class Enemy
 {
     private int x = 0;

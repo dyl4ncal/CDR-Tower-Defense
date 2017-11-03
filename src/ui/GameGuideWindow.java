@@ -1,17 +1,12 @@
 package ui;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
 import javax.swing.*;
-import java.awt.event.*;
 import java.awt.*;
-import io.MapData;
 
 /**
- * This class is for creating the Game Over window
+ * This class is for creating the Game Over window.
  * Allows the user to return to the starting window
- * Or exit out of the program
+ * or exit out of the program.
  * @author Raymond
  */
 

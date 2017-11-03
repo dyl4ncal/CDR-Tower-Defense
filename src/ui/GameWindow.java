@@ -1,10 +1,6 @@
 package ui;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
