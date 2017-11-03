@@ -211,7 +211,7 @@ public class GameWindow extends JFrame
         playButton.setMinimumSize(new Dimension(300, 25));
         playButton.setMaximumSize(new Dimension(300, 25));
 
-        fastForwardButton = new JButton("Fast");
+        fastForwardButton = new JButton("Faster");
         fastForwardButton.setMinimumSize(new Dimension(300, 25));
         fastForwardButton.setMaximumSize(new Dimension(300, 25));
 
@@ -271,12 +271,12 @@ public class GameWindow extends JFrame
                 if(gameClock.getDelay() == 40)
                 {
                     gameClock.setDelay(80);
-                    fastForwardButton.setText("Fast");
+                    fastForwardButton.setText("Faster");
                 }
                 else
                 {
                     gameClock.setDelay(40);
-                    fastForwardButton.setText("Slow");
+                    fastForwardButton.setText("Slower");
                 }
             }
         });

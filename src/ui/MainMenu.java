@@ -99,8 +99,8 @@ public class MainMenu extends JFrame
     public void createLabels()
     {
         //Creates the title label
-        title = new JLabel("Tower Defense Game");
-        title.setForeground(Color.red);
+        title = new JLabel("CDR Tower Defense");
+        title.setForeground(Color.CYAN);
         title.setFont(new Font(title.getFont().getName(), Font.PLAIN, 32));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
@@ -116,13 +116,13 @@ public class MainMenu extends JFrame
         titlePanel.add(title, BorderLayout.PAGE_START);
         //This puts the title slightly down from the top of the JFrame
         titlePanel.setBorder(BorderFactory.createEmptyBorder(35, 10, 50, 10));
-        titlePanel.setBackground(Color.GREEN);
+        titlePanel.setBackground(Color.DARK_GRAY);
 
         buttonPanel.add(startButton);
         buttonPanel.add(guideButton, BorderLayout.CENTER);
         //This splits the buttons and the title
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(30, 10, 10, 10));
-        buttonPanel.setBackground(Color.GREEN);
+        buttonPanel.setBackground(Color.DARK_GRAY);
     }
 }
 
