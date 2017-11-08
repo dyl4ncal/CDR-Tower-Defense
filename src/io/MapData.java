@@ -21,7 +21,7 @@ public class MapData
     private int numRows;
     private int numCols;
     private Path pathHead;
-    private int numEnemies = 10;
+    private int numEnemies = 0;
     private int spawnFrequency = 10;
     private int health = 100;
     private int money = 600;

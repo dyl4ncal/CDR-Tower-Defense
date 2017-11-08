@@ -13,15 +13,12 @@ public class Main
 {
     public static void main(String[] args) throws IOException
     {
-        runGame(args);
+        runGame();
     }
     
-    public static void runGame(String[] args) throws IOException
+    public static void runGame() throws IOException
     {
-        DataInput.getDataFile(args);
-        MapData mapData = new MapData(DataInput.getIn1(), DataInput.getIn2());
-
-        MainMenu mainMenu = new MainMenu(mapData);
+        MainMenu mainMenu = new MainMenu();
     }
 }
 

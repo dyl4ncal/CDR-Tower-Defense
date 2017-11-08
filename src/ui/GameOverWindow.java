@@ -76,7 +76,7 @@ public class GameOverWindow extends JFrame
             {
                 //Restarts the game from the start menu
                 //And allows the player to select a map
-                new MainMenu(mapData);
+                new MainMenu();
                 frame.dispose();
             }
         });

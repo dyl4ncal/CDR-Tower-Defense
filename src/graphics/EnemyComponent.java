@@ -18,9 +18,9 @@ public class EnemyComponent extends JComponent
 {   
     private Enemy myEnemy;
     
-    public EnemyComponent(Path head)
+    public EnemyComponent(Path head, int h)
     {
-        myEnemy = new Enemy(head);
+        myEnemy = new Enemy(head, h);
     }
 
     public void draw(Graphics g)
@@ -32,7 +32,14 @@ public class EnemyComponent extends JComponent
         g2.setColor(Color.BLACK);
         g2.fill(e);
         g2.setColor(Color.GREEN);
-        g2.drawString(String.format("%d", myEnemy.getmyHalth()), myEnemy.getX() + 18, myEnemy.getY() + 30);
+        if(myEnemy.getmyHealth() < 10)
+        {
+            g2.drawString(String.format("%d", myEnemy.getmyHealth()), myEnemy.getX() + 22, myEnemy.getY() + 30);
+        }
+        else
+        {
+            g2.drawString(String.format("%d", myEnemy.getmyHealth()), myEnemy.getX() + 18, myEnemy.getY() + 30);
+        }
     }
 
     public void update() {myEnemy.move();}

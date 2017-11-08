@@ -5,7 +5,7 @@ public class Enemy
     private int x = 0;
     private int y = 0;
     private int moveTicker = 0;
-    private int myHealth = 30;
+    private int myHealth = 0;
     private Path.Direction lastDir;
     private Path.Direction currentDir;
     private boolean dirChanged;
@@ -13,8 +13,9 @@ public class Enemy
     private Path currentLocation;
 
     /*At the start, the enemy is given the head node/start tile.*/
-    public Enemy(Path head)
+    public Enemy(Path head, int h)
     {
+        myHealth = h;
         currentLocation = head;
         currentDir = currentLocation.getMyDirection();
         lastDir = currentDir;
@@ -86,7 +87,8 @@ public class Enemy
 
     public int getX() {return x;}
     public int getY() {return y;}
-    public int getmyHalth() {return myHealth;}
+    public int getmyHealth() {return myHealth;}
+    public void setMyHealth(int h) {myHealth = h;}
     public boolean isAlive() {return isAlive;}
 
     private void setCoords()

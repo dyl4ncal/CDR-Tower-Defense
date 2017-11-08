@@ -25,6 +25,7 @@ public class GameWindow extends JFrame
     private JLabel healthLabel, healthNumLabel; 
     private JLabel moneyLabel, moneyNumLabel;
     private JLabel roundLabel, roundNumLabel;
+    private JLabel textBox, description;
     private JButton playButton;
     private JList towerList;
     private JScrollPane towerScroller;
@@ -70,6 +71,7 @@ public class GameWindow extends JFrame
 
         //Create gameClock and associated listener
         createClock();
+        gameClock.start();
     }
 
     private void createPanels()
@@ -105,8 +107,10 @@ public class GameWindow extends JFrame
         //Make textPanel
         textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.PAGE_AXIS));
-        textPanel.setBorder(BorderFactory.createEmptyBorder(31, 10, 30, 10));
+        textPanel.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         textPanel.setBackground(Color.DARK_GRAY);
+        textPanel.add(description, BorderLayout.LINE_START);
+        textPanel.add(textBox, BorderLayout.LINE_START);
     }
 
     private void createMapComponent()
@@ -219,6 +223,17 @@ public class GameWindow extends JFrame
         moneyNumLabel.setAlignmentX(RIGHT_ALIGNMENT);
         roundLabel.setAlignmentX(RIGHT_ALIGNMENT);
         roundNumLabel.setAlignmentX(RIGHT_ALIGNMENT);
+
+        //Text panel label
+        String info = "Description of option selected";
+        textBox = new JLabel(info);
+        textBox.setForeground(Color.ORANGE);
+        textBox.setBackground(Color.DARK_GRAY);
+
+        String des = "Tower attributes";
+        description = new JLabel(des);
+        description.setForeground(Color.ORANGE);
+        description.setBackground(Color.DARK_GRAY);
     }
 
     private void createButtons()
@@ -240,7 +255,6 @@ public class GameWindow extends JFrame
                 {
                     mapComponent.createWave(currentRound);
                     roundNumLabel.setText(String.format("%d", currentRound + 1));
-                    gameClock.start();
                     playButton.setText("Faster");
                     gameClock.setDelay(80);
                 }
@@ -271,12 +285,77 @@ public class GameWindow extends JFrame
         listModel.addElement("Basic");
         listModel.addElement("Melee");
         listModel.addElement("Sniper");
+        listModel.addElement("Splash");
         towerList = new JList(listModel);
         towerList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e)
             {
                 //Nothing yet
+                int cost, attack, range, speed;
+                String info, des;
+                switch( (String) towerList.getSelectedValue())
+                {
+                    case "Sell tower":
+                    {
+                        des = "Sells a tower";
+                        info = "Returns 1/4 of its cost";
+                        break;
+                    }
+
+                    case "Basic":
+                    {
+                        cost = 150;
+                        attack = 2;
+                        range = 3;
+                        speed = 3;
+                        des = "Tower with all moderate stats";
+                        info = "Cost: $"+cost+"   Attack: "+attack+"   Range: "+range+"   Speed: "+speed;
+                        break;
+                    }
+
+                    case "Melee":
+                    {
+                        cost = 200;
+                        range = 1;
+                        attack = 5;
+                        speed = 5;
+                        des = "Tower with the highest attack, small range, and moderate fire rate";
+                        info = "Cost: $"+cost+"   Attack: "+attack+"   Range: "+range+"   Speed: "+speed;
+                        break;
+                    }
+
+                    case "Sniper":
+                    {
+                        cost = 250;
+                        attack = 4;
+                        range = 5;
+                        speed = 10;
+                        des = "Tower with a high attack, largest range, but slow fire rate";
+                        info = "Cost: $"+cost+"   Attack: "+attack+"   Range: "+range+"   Speed: "+speed;
+                        break;
+                    }
+
+                    case "Splash":
+                    {
+                        cost = 300;
+                        attack = 3;
+                        range = 1;
+                        speed = 7;
+                        des = "Tower that hits all enemies in its range with a medium attack, small range, but slow fire rate";
+                        info = "Cost: $"+cost+"   Attack: "+attack+"   Range: "+range+"   Speed: "+speed;
+                        break;
+                    }
+
+                    default:
+                    {
+                        des = "";
+                        info = "";
+                        break;
+                    }
+                }
+                description.setText(des);
+                textBox.setText(info);
             }
         });
         towerList.setLayoutOrientation(JList.VERTICAL);

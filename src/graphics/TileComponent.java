@@ -37,14 +37,6 @@ public class TileComponent extends JComponent
                 Tower myTower = (Tower) myTile;
                 switch(myTower.getTowerType())
                 {
-                    case "Sniper":
-                    {
-                        g2.setColor(Color.GREEN);
-                         //Make the towers slightly smaller than the tile size
-                        g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
-                        break;
-                    }
-
                     case "Basic":
                     {
                         g2.setColor(Color.YELLOW);
@@ -56,6 +48,22 @@ public class TileComponent extends JComponent
                     case "Melee":
                     {
                         g2.setColor(Color.RED);
+                         //Make the towers slightly smaller than the tile size
+                        g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
+                        break;
+                    }
+
+                    case "Sniper":
+                    {
+                        g2.setColor(Color.GREEN);
+                         //Make the towers slightly smaller than the tile size
+                        g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
+                        break;
+                    }
+
+                    case "Splash":
+                    {
+                        g2.setColor(Color.CYAN);
                          //Make the towers slightly smaller than the tile size
                         g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
                         break;

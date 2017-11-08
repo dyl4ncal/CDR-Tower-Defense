@@ -1,0 +1,10 @@
+O    O    O    O    O    O    O    O    O    O    O    O
+SR   R    R    R    R    R    R    R    R    R    D    O
+O    O    O    O    O    O    O    O    O    O    D    O
+O    D    L    L    L    L    L    L    L    L    L    O
+O    D    O    O    O    O    O    O    O    O    O    O
+O    R    R    R    R    R    R    R    R    R    D    O
+O    O    O    O    O    O    O    O    O    O    D    O
+O    D    L    L    L    L    L    L    L    L    L    O
+O    D    O    O    O    O    O    O    O    O    O    O
+O    R    R    R    R    R    R    R    R    R    R    E

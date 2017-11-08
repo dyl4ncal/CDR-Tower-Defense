@@ -34,8 +34,9 @@ public class MapComponent extends JComponent
     private TileComponent[][] componentMat;
     private int enemyTicker = 1;
     private int enemiesSpawned = 0;
-    private int numEnemies;
-    private int spawnFrequency;
+    private int numEnemies = 0;
+    private int enemyHealth = 5;
+    private int spawnFrequency = 10;
     private boolean setupComplete = false;
     private boolean roundOver = false;
 
@@ -118,13 +119,18 @@ public class MapComponent extends JComponent
     {
         if(data.getTile(y, x).getTileType() == TOWER)
         {
+            //When you sell a tower, make sure to get the tower's cost
+            Tower tower = (Tower) data.getTile(y, x);
+            data.incrementMoney(tower.getCost() / 4);
             Tile t = new Tile(y, x);
             data.setTile(t, y, x);
             componentMat[y][x] = new TileComponent(t, y * 50, x * 50);
             componentMat[y][x].draw((Graphics2D) getGraphics());
-            data.incrementMoney(50);
         }
     }
+
+    //May want to use this method to upgrade the tower
+    //public void upgradeTower(){}
 
     public static BufferedImage getBase() {return base;}
     public static BufferedImage getTile() {return tile;}
@@ -181,8 +187,7 @@ public class MapComponent extends JComponent
             if (!enemyComponentList.get(i).isAlive())
             {
                 enemyComponentList.remove(i);
-                //Money gained will be a function of their maximum health
-                data.incrementMoney(8);
+                data.incrementMoney(12);
                 data.decrementHealth();
             }
 
@@ -206,7 +211,7 @@ public class MapComponent extends JComponent
         enemyTicker = 1;
         //Should be a better function tbh
         numEnemies = (round * 3) + 10;
-        spawnFrequency = 10;
+        enemyHealth += round * 3;
         drawEnemies((Graphics2D) getGraphics());
     }
 
@@ -217,9 +222,9 @@ public class MapComponent extends JComponent
         //If enemyTicker = 0, play hasn't been pressed
         //enemiesSpawned is used so we can remove enemies from the list
         //without making this method think it must spawn more
-        if (enemyTicker > 0 && (enemyTicker == spawnFrequency || enemiesSpawned == 0))
+        if (numEnemies != 0 && enemyTicker > 0 && (enemyTicker == spawnFrequency || enemiesSpawned == 0))
         {
-            enemyComponentList.add(new EnemyComponent(data.getHead()));
+            enemyComponentList.add(new EnemyComponent(data.getHead(), enemyHealth));
             enemiesSpawned++;
             enemyTicker = 1;
 

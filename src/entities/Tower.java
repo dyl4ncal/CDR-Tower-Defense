@@ -9,7 +9,7 @@ public class Tower extends Tile
 {
     private enum TowerType
     {
-        BASIC, SNIPER, MELEE
+        BASIC, SNIPER, MELEE, SPLASH
     }
 
     private TowerType myType;
@@ -23,24 +23,10 @@ public class Tower extends Tile
     {
         super(x, y);
         //Set the attributes of the tower
+        //The speed may have to change relative to the clock/ticker
         tower = type;
         switch (type)
         {
-            //Highest range
-            //Moderate damage
-            //Slow attack speed 
-            //Cost is high
-            case "Sniper":
-            {
-                myType = TowerType.SNIPER;
-                cost = 250;
-                //Tile radius
-                range = 5;
-                attack = 4;
-                speed = 7;
-                break;
-            }
-
             //Hits from a fair distance
             //Low amount of damage
             //Low attack speed
@@ -49,9 +35,9 @@ public class Tower extends Tile
             {
                 myType = TowerType.BASIC;
                 cost = 150;
-                range = 2;
+                range = 3;
                 attack = 2;
-                speed = 2;
+                speed = 3;
                 break;
             }
 
@@ -65,7 +51,33 @@ public class Tower extends Tile
                 cost = 200;
                 range = 1;
                 attack = 5;
-                speed = 4;
+                speed = 5;
+                break;
+            }
+
+            //Highest range
+            //Moderate damage
+            //Slow attack speed 
+            //Cost is high
+            case "Sniper":
+            {
+                myType = TowerType.SNIPER;
+                cost = 250;
+                //Tile radius
+                range = 5;
+                attack = 4;
+                speed = 10;
+                break;
+            }
+
+            case "Splash":
+            {
+                myType = TowerType.SPLASH;
+                cost = 300;
+                //Tile radius
+                range = 1;
+                attack = 3;
+                speed = 7;
                 break;
             }
 
@@ -76,7 +88,7 @@ public class Tower extends Tile
                 cost = 150;
                 range = 2;
                 attack = 2;
-                speed = 2;
+                speed = 3;
                 break;
             }
         }
@@ -88,8 +100,29 @@ public class Tower extends Tile
         return TileType.TOWER;
     }
 
+    //Upgrading a tower increases its attack by 1 or 2 (splash is 1, rest are 2)
+    public void incrementAttack(int a)
+    {
+
+    }
+
     public int getCost() {
         return cost;
+    }
+
+    public int getRange()
+    {
+        return range;
+    }
+
+    public int getAttack()
+    {
+        return attack;
+    }
+
+    public int getSpeed()
+    {
+        return speed;
     }
 
     public String getTowerType()

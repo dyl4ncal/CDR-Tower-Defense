@@ -3,7 +3,8 @@ package ui;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
-import io.MapData;
+import java.io.IOException;
+import io.*;
 
 /**
  * This class is for creating the main menu screen
@@ -16,10 +17,10 @@ public class MainMenu extends JFrame
     private JFrame frame;
     private JPanel buttonPanel, titlePanel;
     private JLabel title;
+    private JComboBox mapSelection;
     private JButton startButton, guideButton;
-    private final MapData mapData;
 
-    public MainMenu(MapData data) 
+    public MainMenu() 
     {
         frame = new JFrame();
 
@@ -30,8 +31,6 @@ public class MainMenu extends JFrame
             frame.setIconImage(img.getImage());
         }
         catch(Exception e){}
-
-        mapData = data;
 
         createLabels();
         createButtons();
@@ -72,9 +71,19 @@ public class MainMenu extends JFrame
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-                //Sends the MapComponent Data over to the game menu
-                new GameWindow(mapData);
-                frame.dispose();
+                try
+                {
+                    //Sends the MapComponent Data over to the game menu
+                    String selected = (String) mapSelection.getSelectedItem();
+                    selected += ".txt";
+                    String[] map = new String[1]; 
+                    map[0] = selected;
+                    DataInput.getDataFile(map);
+                    MapData mapData = new MapData(DataInput.getIn1(), DataInput.getIn2());
+                    new GameWindow(mapData);
+                    frame.dispose();
+                }
+                catch(IOException e){}
             }
         });
 
@@ -103,6 +112,12 @@ public class MainMenu extends JFrame
         title.setForeground(Color.CYAN);
         title.setFont(new Font(title.getFont().getName(), Font.ITALIC, 40));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        String[] maps = {"Map1", "Map2", "Map3", "Map4"};
+        mapSelection = new JComboBox(maps);
+        mapSelection.setSelectedIndex(0);
+        mapSelection.setMinimumSize(new Dimension(100, 20));
+        mapSelection.setMaximumSize(new Dimension(100, 20));
     }
 
     public void createPanels()
@@ -118,6 +133,7 @@ public class MainMenu extends JFrame
         titlePanel.setBorder(BorderFactory.createEmptyBorder(35, 10, 50, 10));
         titlePanel.setBackground(Color.DARK_GRAY);
 
+        buttonPanel.add(mapSelection);
         buttonPanel.add(startButton);
         buttonPanel.add(guideButton, BorderLayout.CENTER);
         //This splits the buttons and the title
