@@ -34,7 +34,7 @@ public class GameGuideWindow extends JFrame
         createPanels();
 
         //Can adjust the size
-        frame.setSize(600, 450);
+        frame.setSize(640, 480);
         frame.setTitle("Game Guide");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -62,20 +62,23 @@ public class GameGuideWindow extends JFrame
         //This defines the game guide's text instructions.
         String info = 
         "<html>" +  
-        "1.) To start playing CDR Tower Defense, press 'Start' on the Main Menu!" + "<br />" + 
+        "1.) Select a map from the combo box and press 'Start' button on the Main Menu!" + "<br />" + 
         "<br />2.) After a game is started, you will find yourself inside a computer with a very "
                 + "important task! The computer's Central Processing Unit (CPU) is under attack by "
                 + "malicious software! YOUR JOB IS TO PROTECT IT." + "<br />" +
-        "<br />3.) Press 'Play' when you are up for the task! Immediately, enemies will begin making "
+        "<br />3.) Press 'Play' when you are up for the task! Once you hit the play button, enemies will begin making "
                 + "their way towards the computer's CPU by travelling along the electrical circuits of "
-                + "the computer's motherboard. If enemies reach the CPU, it takes damage." + "<br />" +
-        "<br />4.) Buy defenses from the right panel and place them on the circuit board by clicking a "
-                + "defense type and then clicking where you want it located. Selecting the 'Sell' option "
-                + "allows you to click a defense you own, and sell it for a fraction of the price you payed "
-                + "for it originally. Another way to make $ is by attacking enemies." + "<br />" +
+                + "the computer's motherboard. If enemies reach the CPU, it will take damage." + "<br />" +
+        "<br />4.) Buy towers from the right panel and place them on the circuit board by clicking a "
+                + "tower type and then clicking where you want it located."
+                + "Defeat enemies to generate more $$$" + "<br />" +
         "<br />5.) If you are confident that the CPU is well protected and don't need to carefully plan "
                 + "anymore defensive moves, there is a 'Faster' button at the bottom right which speeds up time." + "<br />" +
-        "<br />6.) Goodluck! This computer system is depending on you!" + "<br />" +        
+        "<br />6.) On the tower panel will be 3 option. 'Select', 'Sell', and 'Upgrade'" +
+         "'Select' shows all the attributes of a tower"+
+         "'Sell' will sell a tower for 1/4 the original cost + upgrades"+
+         "'Upgrade' will upgrade a tower at a certain price. Upgrade price can be checked with 'Select'"+"<br />" +
+        "<br />7.) Goodluck! This computer system is depending on you!" + "<br />" +        
         "</html>";
                 
                

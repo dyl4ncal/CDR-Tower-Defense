@@ -3,10 +3,10 @@
  * @author Colton
  */
 
-package io;
+package entities;
 
-import entities.*;
-
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -21,21 +21,17 @@ public class MapData
     private int numRows;
     private int numCols;
     private Path pathHead;
+    private int round = 0;
     private int numEnemies = 0;
-    private int spawnFrequency = 10;
+    private int spawnInterval = 10;
     private int health = 100;
-    private int money = 600;
+    private int money = 400;
     private boolean healthChanged = false;
     private boolean moneyChanged = false;
 
-    public MapData(Scanner in1, Scanner in2)
+    public MapData(String name)
     {
-        buildTileMat(buildStringMat(in1));
-
-        if (in2 != null)
-        {
-            getGameData(in2);
-        }
+        buildTileMat(buildStringMat(name));
     }
 
     public Tile getTile(int y, int x) {return tileMat[y][x];}
@@ -57,8 +53,10 @@ public class MapData
     public Path getHead() {return pathHead;}
     public int getNumRows() {return numRows;}
     public int getNumCols() {return numCols;}
+    public int getRound() {return round;}
+    public void incrementRound() {round++;}
     public int getNumEnemies() {return numEnemies;}
-    public int getSpawnFrequency(){return spawnFrequency;}
+    public int getSpawnInterval(){return spawnInterval;}
     public int getHealth() {return health;}
 
     public void decrementHealth()
@@ -112,29 +110,18 @@ public class MapData
         }
     }
 
-    private void getGameData(Scanner in)
+    private String[][] buildStringMat(String name)
     {
+        Scanner in;
         try
         {
-            numEnemies = Integer.parseInt(in.nextLine().split("\\s+")[0]);
-            spawnFrequency = Integer.parseInt(in.nextLine().split("\\s+")[0]);
-            health = Integer.parseInt(in.nextLine().split("\\s+")[0]);
-            money = Integer.parseInt(in.nextLine().split("\\s+")[0]);
-
-            if (numEnemies < 1 || spawnFrequency < 1 || health < 1 || money < 1)
-            {
-                throw new IllegalArgumentException("All values must be greater than 0!");
-            }
+            in = new Scanner(new File(name));
         }
-        catch (NumberFormatException e)
+        catch (FileNotFoundException e)
         {
-            throw new IllegalArgumentException("Improper format of game data!");
+            throw new IllegalArgumentException("Map not found!");
         }
-    }
-
-    private String[][] buildStringMat(Scanner in)
-    {
-        ArrayList<String[]> lines = new ArrayList<String[]>();
+        ArrayList<String[]> lines = new ArrayList<>();
         String[][] stringMat;
 
         //Make arraylist
@@ -202,21 +189,9 @@ public class MapData
                         throw new IllegalArgumentException("Invalid format at (" + i + ", " + j + ")!");
                     }
                 }
-                else if(stringMat[i][j].length() == 3)
+                else
                 {
-                    if(stringMat[i][j].charAt(0) != 'T')
-                    {
-                        throw new IllegalArgumentException("Invalid format at (" + i + ", " + j + ")!");
-                    }
-                }
-                else if(stringMat[i][j].length() == 4)
-                {
-                    if(stringMat[i][j].charAt(0) != 'T' || !(stringMat[i][j].charAt(3) == 'U' ||
-                            stringMat[i][j].charAt(3) == 'R' || stringMat[i][j].charAt(3) == 'D' ||
-                            stringMat[i][j].charAt(3) == 'L'))
-                    {
-                        throw new IllegalArgumentException("Invalid format at (" + i + ", " + j + ")!");
-                    }
+                    throw new IllegalArgumentException("Invalid format at (" + i + ", " + j + ")!");
                 }
             }
         }
@@ -264,14 +239,7 @@ public class MapData
             {
                 if (tileMat[i][j] == null)
                 {
-                    if (stringMat[i][j].charAt(0) == 'T')
-                    {
-                        tileMat[i][j] = new Tower(i, j, stringMat[i][j].substring(1, 3));
-                    }
-                    else
-                    {
-                        tileMat[i][j] = new Tile(i, j);
-                    }
+                    tileMat[i][j] = new Tile(i, j);
                 }
             }
         }

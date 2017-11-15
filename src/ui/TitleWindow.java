@@ -3,8 +3,8 @@ package ui;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
-import java.io.IOException;
-import io.*;
+
+import entities.MapData;
 
 /**
  * This class is for creating the main menu screen
@@ -12,7 +12,8 @@ import io.*;
  * 
  * @author Raymond
  */
-public class MainMenu extends JFrame
+
+public class TitleWindow extends JFrame
 {
     private JFrame frame;
     private JPanel buttonPanel, titlePanel;
@@ -20,7 +21,7 @@ public class MainMenu extends JFrame
     private JComboBox mapSelection;
     private JButton startButton, guideButton;
 
-    public MainMenu() 
+    public TitleWindow()
     {
         frame = new JFrame();
 
@@ -39,7 +40,7 @@ public class MainMenu extends JFrame
         //Can adjust the size
         frame.setSize(500, 350);
         frame.setTitle("Main Menu");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Container contentPane = getContentPane();
         contentPane.add(titlePanel, BorderLayout.PAGE_START);
@@ -71,19 +72,12 @@ public class MainMenu extends JFrame
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-                try
-                {
-                    //Sends the MapComponent Data over to the game menu
-                    String selected = (String) mapSelection.getSelectedItem();
-                    selected += ".txt";
-                    String[] map = new String[1]; 
-                    map[0] = selected;
-                    DataInput.getDataFile(map);
-                    MapData mapData = new MapData(DataInput.getIn1(), DataInput.getIn2());
-                    new GameWindow(mapData);
-                    frame.dispose();
-                }
-                catch(IOException e){}
+                //Sends the MapComponent Data over to the game menu
+                String selected = (String) mapSelection.getSelectedItem();
+                selected += ".txt";
+                MapData mapData = new MapData(selected);
+                new GameWindow(mapData);
+                frame.dispose();
             }
         });
 
@@ -113,7 +107,7 @@ public class MainMenu extends JFrame
         title.setFont(new Font(title.getFont().getName(), Font.ITALIC, 40));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        String[] maps = {"Map1", "Map2", "Map3", "Map4"};
+        String[] maps = {"Map1", "Map2", "Map3", "Map4", "Map5"};
         mapSelection = new JComboBox(maps);
         mapSelection.setSelectedIndex(0);
         mapSelection.setMinimumSize(new Dimension(100, 20));

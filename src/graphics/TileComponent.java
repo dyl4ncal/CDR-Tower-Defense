@@ -14,8 +14,8 @@ public class TileComponent extends JComponent
     public TileComponent(Tile tile, int y, int x)
     {
         myTile = tile;
-        myY = y;
-        myX = x;
+        myY = y * 50;
+        myX = x * 50;
         //Set the size of each tile to 50, just good practice to use a variable
         mySize = 50;
     }
@@ -35,50 +35,14 @@ public class TileComponent extends JComponent
             case TOWER:
             {
                 Tower myTower = (Tower) myTile;
-                switch(myTower.getTowerType())
-                {
-                    case "Basic":
-                    {
-                        g2.setColor(Color.YELLOW);
-                         //Make the towers slightly smaller than the tile size
-                        g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
-                        break;
-                    }
-
-                    case "Melee":
-                    {
-                        g2.setColor(Color.RED);
-                         //Make the towers slightly smaller than the tile size
-                        g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
-                        break;
-                    }
-
-                    case "Sniper":
-                    {
-                        g2.setColor(Color.GREEN);
-                         //Make the towers slightly smaller than the tile size
-                        g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
-                        break;
-                    }
-
-                    case "Splash":
-                    {
-                        g2.setColor(Color.CYAN);
-                         //Make the towers slightly smaller than the tile size
-                        g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
-                        break;
-                    }
-
-                    default:
-                    {
-                        break;
-                    }
-                }
+                g2.setColor(myTower.getColor());
+                g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
                 //Surround the tower with a border
                 g2.setColor(Color.BLACK);
                 g2.drawRect(myX+7, myY+7, mySize-15, mySize-15);
                 g2.setColor(Color.BLACK);
                 g2.drawRect(myX, myY, mySize, mySize);
+                g2.drawString(String.format("%d", myTower.getUpgradeLevel()), myX + 22, myY + 30);
                 break;
             }
 
@@ -95,18 +59,20 @@ public class TileComponent extends JComponent
         {
             case PATH:
             {
-                g2.setColor(Color.WHITE);
+                g2.setColor(Color.LIGHT_GRAY);
                 g2.fillRect(myX, myY, mySize, mySize);
                 break;
             }
             case BASE:
             {
-                g2.drawImage(MapComponent.getBase(), myX, myY, null);
-                g2.setColor(Color.BLACK);
-                g2.drawRect(myX, myY, mySize, mySize);
-                Ellipse2D.Double e = new Ellipse2D.Double(myX + 15, myY + 15, 20, 20);
+                g2.drawImage(MapComponent.getBaseImage(), myX, myY, null);
+                /*g2.setColor(Color.BLACK);
+                g2.drawRect(myX, myY, mySize, mySize);*/
+                Ellipse2D.Double e = new Ellipse2D.Double(myX + 10, myY + 10, 30, 30);
                 g2.setColor(Color.BLACK);
                 g2.fill(e);
+                g2.setColor(Color.CYAN);
+                g2.drawString("CPU", myX + 13, myY + 30);
                 break;
             }
         }

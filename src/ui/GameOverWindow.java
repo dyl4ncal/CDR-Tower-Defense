@@ -3,7 +3,7 @@ package ui;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
-import io.MapData;
+import entities.MapData;
 
 /**
  * This class is for creating the Game Over window
@@ -16,7 +16,7 @@ public class GameOverWindow extends JFrame
 {
     private JFrame frame;
     private JPanel buttonPanel, titlePanel;
-    private JLabel title;
+    private JLabel title, roundLabel;
     private JButton restartButton, exitButton;
     private final MapData mapData;
 
@@ -76,7 +76,7 @@ public class GameOverWindow extends JFrame
             {
                 //Restarts the game from the start menu
                 //And allows the player to select a map
-                new MainMenu();
+                new TitleWindow();
                 frame.dispose();
             }
         });
@@ -102,9 +102,14 @@ public class GameOverWindow extends JFrame
     {
         //Creates the title label
         title = new JLabel("Game Over");
-        title.setForeground(Color.red);
+        title.setForeground(Color.RED);
         title.setFont(new Font(title.getFont().getName(), Font.PLAIN, 42));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        roundLabel = new JLabel("CPU was infected on round "+mapData.getRound());
+        roundLabel.setForeground(Color.RED);
+        roundLabel.setFont(new Font(title.getFont().getName(), Font.PLAIN, 18));
+        roundLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
 
     public void createPanels()
@@ -118,6 +123,7 @@ public class GameOverWindow extends JFrame
         //Add buttons and labels to the JPanels
 
         titlePanel.add(title, BorderLayout.PAGE_START);
+        titlePanel.add(roundLabel, BorderLayout.PAGE_END);
         //This puts the title slightly down from the top of the JFrame
         titlePanel.setBorder(BorderFactory.createEmptyBorder(30, 10, 20, 10));
         titlePanel.setBackground(Color.BLACK);

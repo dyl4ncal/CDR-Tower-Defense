@@ -8,7 +8,7 @@ import java.awt.*;
 
 import entities.Tower;
 import graphics.*;
-import io.MapData;
+import entities.MapData;
 
 /**
  * This class is for creating the game window and putting the mapComponent and side bars
@@ -47,8 +47,10 @@ public class GameWindow extends JFrame
         }
         catch(Exception e){}
 
-        //Set the specs of the game menu frame
-        frame.setSize(712, 590);
+        //Set the specs of the game menu frame based on map data
+        int rows = md.getNumCols() * 50;
+        int cols = md.getNumRows() * 50;
+        frame.setSize(112 + rows, 90 + cols);
         frame.setTitle("Game Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -116,49 +118,19 @@ public class GameWindow extends JFrame
     private void createMapComponent()
     {
         mapComponent = new MapComponent(data);
-        mapComponent.addMouseListener(new MouseListener() {
+        mapComponent.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
-                if(towerList.getSelectedValue().equals("Sell tower"))
+                if(towerList.getSelectedValue().equals("Select"))
                 {
-                    int x = e.getX() / 50;
-                    int y = e.getY() / 50;
-                    mapComponent.sellTower(y, x);
+                   String info = mapComponent.selectTower(towerList.getSelectedValue().toString(), e.getX() / 50, e.getY() / 50);
+                   textBox.setText(info);
                 }
 
                 else if (towerList.getSelectedValue() != null)
                 {
-                    int x = e.getX() / 50;
-                    int y = e.getY() / 50;
-                    //Instead of Basic it will be towerList.getSelectedValue()
-                    mapComponent.setTile(new Tower(y, x, (String) towerList.getSelectedValue()), y, x);
+                    mapComponent.swapTile(towerList.getSelectedValue().toString(), e.getY() / 50, e.getX() / 50);
                 }
-
-                else
-                {
-                    //
-                }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
     }
@@ -210,7 +182,7 @@ public class GameWindow extends JFrame
         roundLabel.setMaximumSize(new Dimension(300, 20));
 
         //Create healthNumLabel
-        roundNumLabel = new JLabel(String.format("%d", currentRound + 1));
+        roundNumLabel = new JLabel(String.format("%d", data.getRound()));
         roundNumLabel.setForeground(Color.ORANGE);
         roundNumLabel.setFont(new Font(roundNumLabel.getFont().getName(), Font.PLAIN, 16));
         roundNumLabel.setMinimumSize(new Dimension(300, 20));
@@ -250,26 +222,22 @@ public class GameWindow extends JFrame
             public void actionPerformed(ActionEvent arg0)
             {
                 //Start a new round based on currentRound
-
-                if(playButton.getText().equals("Play"))
+                if(playButton.getText().equals("Play") && mapComponent.isRoundOver())
                 {
-                    mapComponent.createWave(currentRound);
-                    roundNumLabel.setText(String.format("%d", currentRound + 1));
+                    data.incrementRound();
+                    mapComponent.createWave();
+                    roundNumLabel.setText(String.format("%d", data.getRound()));
                     playButton.setText("Faster");
-                    gameClock.setDelay(80);
+                    gameClock.setDelay(60);
                 }
-                
-                //Slow the game clock down
-                else if(playButton.getText().equals("Slower"))
+                else if(playButton.getText().equals("Slower"))  //Slow the game clock down
                 {
-                    gameClock.setDelay(80);
+                    gameClock.setDelay(60);
                     playButton.setText("Faster");
                 }
-
-                //Speed the game clock back up
-                else if(playButton.getText().equals("Faster"))
+                else if(playButton.getText().equals("Faster"))  //Speed the game clock back up
                 {
-                    gameClock.setDelay(40);
+                    gameClock.setDelay(30);
                     playButton.setText("Slower");
                 }
             }
@@ -281,7 +249,9 @@ public class GameWindow extends JFrame
         DefaultListModel listModel = new DefaultListModel();
         //This will check if theres a tower in the cell, if there is sell it
         //For half of it's original cost
-        listModel.addElement("Sell tower");
+        listModel.addElement("Select");
+        listModel.addElement("Sell Tower");
+        listModel.addElement("Upgrade Tower");
         listModel.addElement("Basic");
         listModel.addElement("Melee");
         listModel.addElement("Sniper");
@@ -292,65 +262,70 @@ public class GameWindow extends JFrame
             public void valueChanged(ListSelectionEvent e)
             {
                 //Nothing yet
-                int cost, attack, range, speed;
-                String info, des;
+                int cost, attack, range, speed, upgrade, sell, level;
+                String info = "";
+                String des = "";
                 switch( (String) towerList.getSelectedValue())
                 {
-                    case "Sell tower":
+                    case "Select":
+                    {
+                        des = "Select a tower to view it's attributes";
+                        //6 things
+                        info = "Attributes appear here";
+                        break;
+                    }
+                    case "Sell Tower":
                     {
                         des = "Sells a tower";
                         info = "Returns 1/4 of its cost";
                         break;
                     }
 
+                    case "Upgrade Tower":
+                    {
+                        des = "Upgrades = tower's cost * upgrade level";
+                        info = "Attack value increase  Basic: 2  Melee: 4  Sniper: 3  Splash: 2";
+                        break;
+                    }
+
                     case "Basic":
                     {
                         cost = 150;
-                        attack = 2;
+                        attack = 4;
                         range = 3;
-                        speed = 3;
+                        speed = 5;
                         des = "Tower with all moderate stats";
-                        info = "Cost: $"+cost+"   Attack: "+attack+"   Range: "+range+"   Speed: "+speed;
+                        info = String.format("Cost: $%d   Attack: %d   Range: %d   Speed: %d", cost, attack, range, speed);
                         break;
                     }
-
                     case "Melee":
                     {
                         cost = 200;
+                        attack = 8;
                         range = 1;
-                        attack = 5;
-                        speed = 5;
-                        des = "Tower with the highest attack, small range, and moderate fire rate";
-                        info = "Cost: $"+cost+"   Attack: "+attack+"   Range: "+range+"   Speed: "+speed;
+                        speed = 6;
+                        des = "Tower with a high attack, small range, and moderate fire rate";
+                        info = String.format("Cost: $%d   Attack: %d   Range: %d   Speed: %d", cost, attack, range, speed);
                         break;
                     }
-
                     case "Sniper":
                     {
                         cost = 250;
-                        attack = 4;
+                        attack = 6;
                         range = 5;
-                        speed = 10;
-                        des = "Tower with a high attack, largest range, but slow fire rate";
-                        info = "Cost: $"+cost+"   Attack: "+attack+"   Range: "+range+"   Speed: "+speed;
+                        speed = 6;
+                        des = "Tower with a moderate attack, large range, but slow fire rate";
+                        info = String.format("Cost: $%d   Attack: %d   Range: %d   Speed: %d", cost, attack, range, speed);
                         break;
                     }
-
                     case "Splash":
                     {
                         cost = 300;
                         attack = 3;
                         range = 1;
-                        speed = 7;
-                        des = "Tower that hits all enemies in its range with a medium attack, small range, but slow fire rate";
-                        info = "Cost: $"+cost+"   Attack: "+attack+"   Range: "+range+"   Speed: "+speed;
-                        break;
-                    }
-
-                    default:
-                    {
-                        des = "";
-                        info = "";
+                        speed = 10;
+                        des = "Tower that hits all enemies in its range with a low attack, small range, but slow fire rate";
+                        info = String.format("Cost: $%d   Attack: %d   Range: %d   Speed: %d", cost, attack, range, speed);
                         break;
                     }
                 }
@@ -366,23 +341,15 @@ public class GameWindow extends JFrame
     private void createClock()
     {
         ActionListener taskPerformer = new ActionListener() {
-        boolean setupComplete = false;
-
             public void actionPerformed(ActionEvent evt)
             {
-                if (!setupComplete)
-                {
-                    setupComplete = true;
-                    mapComponent.setSetupComplete();
-                }
-
-                mapComponent.repaint();
-
                 if(mapComponent.isRoundOver())
                 {
                     playButton.setText("Play");
-                    currentRound++;
-                    data.incrementMoney(50 + (currentRound * 2));
+                }
+                else
+                {
+                    mapComponent.repaint();
                 }
 
                 if(data.getHealthChanged())
