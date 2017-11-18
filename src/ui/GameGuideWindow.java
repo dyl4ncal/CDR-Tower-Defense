@@ -74,9 +74,9 @@ public class GameGuideWindow extends JFrame
                 + "Defeat enemies to generate more $$$" + "<br />" +
         "<br />5.) If you are confident that the CPU is well protected and don't need to carefully plan "
                 + "anymore defensive moves, there is a 'Faster' button at the bottom right which speeds up time." + "<br />" +
-        "<br />6.) On the tower panel will be 3 option. 'Select', 'Sell', and 'Upgrade'" +
+        "<br />6.) On the tower panel will be 3 options: 'Select', 'Sell', and 'Upgrade' " +
          "'Select' shows all the attributes of a tower"+
-         "'Sell' will sell a tower for 1/4 the original cost + upgrades"+
+         "'Sell' will sell a tower for 1/4 the original cost * upgrades"+
          "'Upgrade' will upgrade a tower at a certain price. Upgrade price can be checked with 'Select'"+"<br />" +
         "<br />7.) Goodluck! This computer system is depending on you!" + "<br />" +        
         "</html>";

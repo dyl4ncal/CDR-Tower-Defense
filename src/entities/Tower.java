@@ -10,15 +10,47 @@ import java.awt.Color;
 
 import java.util.ArrayList;
 
+/**
+ * Tower class holds all the information about towers
+ * Currently there are 5 tower types, each with different attributes
+ * Able to combine 2 towers to make an even greater tower
+ * This is my ranking system for the overall best combinations
+ * Short description for each
+ *
+ * Basic tower combinations
+ * #7 Basic and Melee   -Kills bosses fairly fast
+ * #2 Basic and Splash  -Good for Killing groups of enemies
+ * #9 Basic and Sniper  -A sniper tower with increased speed
+ * #10 Basic and Speed  -Only gives slights increases to speed and attack
+ *
+ * Melee tower combinations
+ * #3 Melee and Splash  -Kills enemies at close range quickly
+ * #4 Melee and Speed   -Insanely fast at killing bosses at close range
+ * #8 Melee and Sniper  -Good for killing bosses at long distance
+ *
+ * Speed tower combinations
+ * #5 Speed and Sniper  -Long range tower that hits very fast
+ * #6 Speed and Splash  -Hits groups of enemies quickly
+ *
+ * Sniper tower combinations
+ * #1 Sniper and Splash -Best tower at killing lots of enemies 
+ *
+ * @author Raymond
+ */
+
 public class Tower extends Tile
 {
     public enum TowerType
     {
-        BASIC, SNIPER, MELEE, SPLASH
+        BASIC, MELEE, SNIPER, SPEED, SPLASH,
     }
 
     private TowerType myType;
     private Color myColor;
+    private TowerType second; //The second tower's type
+    private Color secondColor; //The inside color
+    private Boolean canCombine = true; //Can only combine once
+    private Boolean isSelected;
     private int cost;
     private int attackTicker = 1;
     private int range;
@@ -26,11 +58,14 @@ public class Tower extends Tile
     private int speed;
     private int sellValue;
     private int upgradeLevel = 1;
+    private int myX, myY;
 
     public Tower(String type, int y, int x)
     {
         super(y, x);
-
+        myX = x;
+        myY = y;
+        second = null;
         //Set the attributes of the tower
         //The speed may have to change relative to the clock/ticker
         switch (type)
@@ -44,7 +79,7 @@ public class Tower extends Tile
                 myType = TowerType.BASIC;
                 myColor = Color.YELLOW;
                 cost = 150;
-                attack = 4;
+                attack = 5;
                 range = 3;
                 speed = 4;
                 break;
@@ -59,9 +94,20 @@ public class Tower extends Tile
                 myType = TowerType.MELEE;
                 myColor = Color.RED;
                 cost = 200;
-                attack = 8;
+                attack = 12;
                 range = 1;
-                speed = 5;
+                speed = 6;
+                break;
+            }
+
+            case "Speed":
+            {
+                myType = TowerType.SPEED;
+                myColor = Color.WHITE;
+                cost = 200;
+                attack = 3;
+                range = 1;
+                speed = 2;
                 break;
             }
 
@@ -74,7 +120,7 @@ public class Tower extends Tile
                 myType = TowerType.SNIPER;
                 myColor = new Color(128, 255, 0);
                 cost = 250;
-                attack = 6;
+                attack = 7;
                 range = 5;
                 speed = 6;
                 break;
@@ -102,9 +148,9 @@ public class Tower extends Tile
                 myType = TowerType.BASIC;
                 myColor = Color.YELLOW;
                 cost = 150;
-                attack = 4;
+                attack = 5;
                 range = 3;
-                speed = 4;
+                speed = 3;
                 break;
             }
         }
@@ -118,12 +164,22 @@ public class Tower extends Tile
     public int getUpgradeLevel(){return upgradeLevel;}
     public int getUpgradeCost(){return cost * upgradeLevel;}
     public Color getColor(){return myColor;}
+    public Color getSecondColor(){return secondColor;}
 
     //For the Select method
     public int getAttack(){return attack;}
     public int getRange(){return range;}
     public int getSpeed(){return speed;}
     public int getSellValue(){return sellValue/4;}
+
+    public int getX(){return myX;}
+    public int getY(){return myY;}
+
+    public Boolean isSelected(){return isSelected;}
+    public void setIsSelected(Boolean b)
+    {
+        isSelected = b;
+    }
 
     //Upgrading a tower increases its attack by 1 or 2 (splash is 1, rest are 2)
     public void upgrade()
@@ -134,10 +190,8 @@ public class Tower extends Tile
             {
                 Color[] colorArray = {Color.ORANGE, new Color(255, 142, 32), new Color(255, 77, 0)};
                 myColor = colorArray[upgradeLevel - 1]; //new Color(255, 50, 0);
-                attack += 3;
+                attack += 4;
                 sellValue += cost * upgradeLevel;
-                                  //Red, Green, Blue
-                //name = new Color{255, 255, 255}
                 break;
             }
 
@@ -145,7 +199,16 @@ public class Tower extends Tile
             {
                 Color[] colorArray = {new Color(255, 0, 80), new Color(204, 0, 102), new Color(153, 0, 153)};
                 myColor = colorArray[upgradeLevel - 1];
-                attack += 6;
+                attack += 8;
+                sellValue += cost * upgradeLevel;
+                break;
+            }
+
+            case SPEED:
+            {
+                Color[] colorArray = {Color.LIGHT_GRAY, Color.GRAY, Color.DARK_GRAY};
+                myColor = colorArray[upgradeLevel - 1];
+                attack += 2;
                 sellValue += cost * upgradeLevel;
                 break;
             }
@@ -171,13 +234,49 @@ public class Tower extends Tile
 
             default:
             {
-                myColor = Color.ORANGE;
-                attack += 1;
+                Color[] colorArray = {Color.ORANGE, new Color(255, 142, 32), new Color(255, 77, 0)};
+                myColor = colorArray[upgradeLevel - 1];
+                attack += 4;
                 sellValue += cost * upgradeLevel;
                 break;
             }
         }
         upgradeLevel++;
+    }
+
+    public void combineTower(Tower t)
+    {
+        canCombine = false;
+        //Add the attack stats together
+        attack += t.getAttack();
+
+        //Check the ranges and pick the longer one
+        if(t.getRange() > range)
+        {
+            range = t.getRange();
+        }
+
+        //Check the ranges and pick the shorter one
+        if(t.getSpeed() < speed)
+        {
+            speed = t.getSpeed();
+        }
+
+        //To get accurate sell values
+        cost = t.getCost();
+        sellValue += 1500;
+        //Set upgrade level back to 1
+        upgradeLevel = 1;
+        secondColor = myColor;
+        myColor = t.getColor();
+        //Set second to the current tower type
+        second = myType;
+        myType = t.getTowerType();
+    }
+
+    public Boolean canCombine()
+    {
+        return (canCombine && upgradeLevel == 4);
     }
 
     public int attack(ArrayList<EnemyComponent> enemyList)
@@ -189,8 +288,10 @@ public class Tower extends Tile
             for (int i = 0; i < enemyList.size(); i++)
             {
                 EnemyComponent e = enemyList.get(i);
-                if (e.getX() >= getX() - range && e.getX() <= getX() + range &&
-                        e.getY() >= getY() - range && e.getY() <= getY() + range)
+                if (e.getX() >= getX() - range
+                 && e.getX() <= getX() + range
+                 && e.getY() >= getY() - range 
+                 && e.getY() <= getY() + range)
                 {
                     e.decrementHealth(attack);
                     if (!e.isAlive())
@@ -200,7 +301,7 @@ public class Tower extends Tile
                         i--;
                     }
                     //Splash towers attack everything in the list
-                    if (myType != TowerType.SPLASH)
+                    if (myType != TowerType.SPLASH && second != TowerType.SPLASH)
                     {
                         break;
                     }

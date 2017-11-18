@@ -32,6 +32,7 @@ public class MapComponent extends JComponent
     private MapData data;
     private ArrayList<EnemyComponent> enemyList;
     private ArrayList<Tower> towerList;
+    private Tower previousTower;
     private TileComponent[][] componentMat;
     private int enemyTicker = 1;
     private int enemiesSpawned = 0;
@@ -111,6 +112,15 @@ public class MapComponent extends JComponent
                 componentMat[i][j].draw(g2);
             }
         }
+
+        if(previousTower != null && previousTower.isSelected())
+        {
+            int range = previousTower.getRange();
+            g2.setColor(Color.RED);
+            int x = (previousTower.getX() * 50) - (range * 50);
+            int y = (previousTower.getY() * 50) - (range * 50);
+            g2.drawRect(x + 1, y + 1, 50 * (range * 2 + 1)-2, 50 * (range * 2 + 1)-2);
+        }
     }
 
     private void drawPath(Graphics2D g2)
@@ -162,17 +172,19 @@ public class MapComponent extends JComponent
             enemyTicker = 1;
             //Should be a better function tbh
             numEnemies = 8 + ((data.getRound() - 1) * 5 / 2);
-            enemyHealth = 25 + (int) (Math.pow(data.getRound() - 1, 2) + (data.getRound() - 1) * 3);
+            enemyHealth = 25 + (int) (Math.pow(data.getRound() - 1, 1.7) + (data.getRound() - 1) * 3);
             roundOver = false;
         }
     }
 
+    //Bosses should give much more loot than a regular enemy
+    //They should also deal more damage to the base
     private void createBossWave()
     {
         enemiesSpawned = 0;
         enemyTicker = 1;
         numEnemies = 1;
-        enemyHealth = 550 + (int) (Math.pow(data.getRound(), 3) + (data.getRound()) * 3);
+        enemyHealth = 550 + (int) (Math.pow(data.getRound(), 2.2) + (data.getRound()) * 4);
         roundOver = false;
     }
 
@@ -228,7 +240,14 @@ public class MapComponent extends JComponent
         {
             roundOver = true;
             //Get money for finishing a round?
-            data.incrementMoney(50 + (data.getRound() * 2));
+            if(data.getRound() % 10 == 0)
+            {
+                data.incrementMoney(130 + (data.getRound()) * 2);
+            }
+            else
+            {
+                data.incrementMoney(50 + (data.getRound() - 1) * 2);
+            }
             repaint();
         }
     }
@@ -239,15 +258,23 @@ public class MapComponent extends JComponent
         String info = "";
         int sell, upgrade, attack, range, speed, level;
 
+        if(previousTower != null)
+        {
+            previousTower.setIsSelected(false);
+        }
+
         if(tileSelected.getTileType() == TOWER)
         {
             Tower t = ((Tower) tileSelected);
+            t.setIsSelected(true);
+            previousTower = t;
             sell = t.getSellValue();
             upgrade = t.getUpgradeCost();
             attack = t.getAttack();
             range = t.getRange();
             speed = t.getSpeed();
             level = t.getUpgradeLevel();
+            
             if(t.getUpgradeLevel() == 4)
             {
                 upgrade = t.getUpgradeCost();
@@ -267,6 +294,8 @@ public class MapComponent extends JComponent
             info = "Attributes appear here";
         }
 
+        repaint();
+
         return info;
     }
 
@@ -275,11 +304,13 @@ public class MapComponent extends JComponent
     {
         Tile tileSelected = data.getTile(y, x);
 
-        if (s.equals("Sell Tower")) //Sell a tower, return 1/4 of the cost to the player
+        if (s.equals("Sell")) //Sell a tower, return 1/4 of the cost to the player
         {
             if(tileSelected.getTileType() == TOWER)
             {
-                data.incrementMoney(((Tower)tileSelected).getCost() / 4);
+                data.incrementMoney(((Tower)tileSelected).getSellValue());
+                ((Tower) tileSelected).setIsSelected(false);
+                repaint();
                 towerList.remove(tileSelected);
                 tileSelected = new Tile(y, x);
                 data.setTile(tileSelected, y, x);
@@ -292,7 +323,7 @@ public class MapComponent extends JComponent
         }
 
         //Upgrades cannot go past level 4
-        else if(s.equals("Upgrade Tower"))
+        else if(s.equals("Upgrade"))
         {
             //Check if selected tile is a tower and if you have enough money
             if(tileSelected.getTileType() == TOWER)
@@ -312,38 +343,50 @@ public class MapComponent extends JComponent
             }
         }
 
+        //THIS IS THE PART THAT CHECKS IF YOU CAN COMBINE TOWERS
+        else if(tileSelected.getTileType() == TOWER)
+        {
+            Tower t = (Tower) tileSelected;
+            Tower towerSelected = new Tower(s, y, x);
+            //LOL this got to be pretty big
+            //This asks 
+            //Do you have enough money?
+            //Is the tower fully upgraded?
+            //Can the tower actually combine?
+            //Is the tower the same type as the one to combine?
+            if(1500 <= data.getMoney() 
+               && t.getUpgradeLevel() == 4 
+               && t.canCombine() 
+               && t.getTowerType() != towerSelected.getTowerType())
+            {
+                t.combineTower(towerSelected);
+                data.decrementMoney(1500);
+                repaint();
+            }
+
+            if(roundOver)
+            {
+                componentMat[y][x].draw((Graphics2D)getGraphics());
+            }
+        }
+
         else    //Buy a tower, decrement money by the cost
         {
             Tower towerSelected = new Tower(s, y, x);
             if (tileSelected.getTileType() == TILE && towerSelected.getCost() <= data.getMoney())
             {
+                towerSelected.setIsSelected(true);
+                previousTower = towerSelected;
+                repaint();
                 data.decrementMoney(towerSelected.getCost());
                 towerList.add(towerSelected);
                 data.setTile(towerSelected, y, x);
                 componentMat[y][x] = new TileComponent(towerSelected, y, x);
-                if (roundOver)
+                if(roundOver)
                 {
                     componentMat[y][x].draw((Graphics2D)getGraphics());
                 }
             }
         }
     }
-
-    //May want to use this method to upgrade the tower
-    //Upgrading towers will cost 100 (?) to upgrade
-    //So we need to check if they have the correct amount before
-    /*public void upgradeTower(Tower t)
-    {
-        if(t.getTowerType() == TowerType.SPLASH)
-        {
-            t.upgrade(1);
-        }
-
-        else
-        {
-            t.upgrade(2);
-        }
-    }*/
 }
-
-

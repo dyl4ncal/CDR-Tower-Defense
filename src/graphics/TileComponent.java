@@ -40,7 +40,16 @@ public class TileComponent extends JComponent
                 //Surround the tower with a border
                 g2.setColor(Color.BLACK);
                 g2.drawRect(myX+7, myY+7, mySize-15, mySize-15);
-                g2.setColor(Color.BLACK);
+                
+                if(myTower.getSecondColor() != null)
+                {
+                    //Draw a tower inside the other tower around it
+                    g2.setColor(myTower.getSecondColor());
+                    g2.fillRect(myX+14, myY+14, mySize-28, mySize-28);
+                    g2.setColor(Color.BLACK);
+                    g2.drawRect(myX+14, myY+14, mySize-28, mySize-28);
+                }
+
                 g2.drawRect(myX, myY, mySize, mySize);
                 g2.drawString(String.format("%d", myTower.getUpgradeLevel()), myX + 22, myY + 30);
                 break;

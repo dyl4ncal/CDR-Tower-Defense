@@ -53,9 +53,14 @@ public class EnemyComponent extends JComponent
                 g2.drawString(String.format("%d", myHealth), x + 22, y + 30);
             }
 
-            else if(myHealth > 999)
+            else if(myHealth > 9999)
             {
-                g2.drawString(String.format("%d", 999), x + 14, y + 30);
+                g2.drawString(String.format("%d", 9999), x + 12, y + 30);
+            }
+
+            else if(myHealth < 9999 && myHealth > 99)
+            {
+                g2.drawString(String.format("%d", myHealth), x + 12, y + 30);
             }
 
             else if(myHealth < 100)

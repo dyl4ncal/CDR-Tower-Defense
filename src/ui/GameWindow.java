@@ -26,7 +26,7 @@ public class GameWindow extends JFrame
     private JLabel moneyLabel, moneyNumLabel;
     private JLabel roundLabel, roundNumLabel;
     private JLabel textBox, description;
-    private JButton playButton;
+    private JButton playButton, mainMenuButton;
     private JList towerList;
     private JScrollPane towerScroller;
     private MapComponent mapComponent;
@@ -51,7 +51,7 @@ public class GameWindow extends JFrame
         int rows = md.getNumCols() * 50;
         int cols = md.getNumRows() * 50;
         frame.setSize(112 + rows, 90 + cols);
-        frame.setTitle("Game Menu");
+        frame.setTitle("CDR Tower Defense");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create contentPane
@@ -105,6 +105,7 @@ public class GameWindow extends JFrame
         towerPanel.add(towerScroller, BorderLayout.CENTER);
         createButtons();
         towerPanel.add(playButton, BorderLayout.PAGE_END);
+        towerPanel.add(mainMenuButton, BorderLayout.PAGE_END);
 
         //Make textPanel
         textPanel = new JPanel();
@@ -118,9 +119,10 @@ public class GameWindow extends JFrame
     private void createMapComponent()
     {
         mapComponent = new MapComponent(data);
-        mapComponent.addMouseListener(new MouseAdapter() {
+        mapComponent.addMouseListener(new MouseAdapter(){
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e){
+            try{
                 if(towerList.getSelectedValue().equals("Select"))
                 {
                    String info = mapComponent.selectTower(towerList.getSelectedValue().toString(), e.getX() / 50, e.getY() / 50);
@@ -131,70 +133,43 @@ public class GameWindow extends JFrame
                 {
                     mapComponent.swapTile(towerList.getSelectedValue().toString(), e.getY() / 50, e.getX() / 50);
                 }
-            }
+            }catch(Exception exp){}
+        }
         });
+    }
+
+    private JLabel createLabel(String s, Color c)
+    {
+        JLabel label = new JLabel(s);
+        label.setForeground(c);
+        label.setFont(new Font(label.getFont().getName(), Font.PLAIN, 16));
+        label.setPreferredSize(new Dimension(95, 20));
+        label.setMinimumSize(new Dimension(300, 20));
+        label.setMaximumSize(new Dimension(300, 20));
+        label.setAlignmentX(RIGHT_ALIGNMENT);
+        return label;
+    }
+
+    private JLabel createNumLabel(String s, int i, Color c)
+    {
+        JLabel label = new JLabel(String.format(s, i));
+        label.setForeground(c);
+        label.setFont(new Font(label.getFont().getName(), Font.PLAIN, 16));
+        label.setPreferredSize(new Dimension(95, 20));
+        label.setMinimumSize(new Dimension(300, 20));
+        label.setMaximumSize(new Dimension(300, 20));
+        label.setAlignmentX(RIGHT_ALIGNMENT);
+        return label;
     }
 
     private void createLabels()
     {
-        //Create healthLabel
-        healthLabel = new JLabel("Health:");
-        healthLabel.setForeground(Color.RED);
-        healthLabel.setFont(new Font(healthLabel.getFont().getName(), Font.PLAIN, 16));
-        healthLabel.setPreferredSize(new Dimension(95, 20));
-        healthLabel.setMinimumSize(new Dimension(300, 20));
-        healthLabel.setMaximumSize(new Dimension(300, 20));
-
-        //Create healthNumLabel
-        healthNumLabel = new JLabel(String.format("%d", data.getHealth()));
-        healthNumLabel.setForeground(Color.RED);
-        healthNumLabel.setFont(new Font(healthLabel.getFont().getName(), Font.PLAIN, 16));
-        healthNumLabel.setMinimumSize(new Dimension(300, 20));
-        healthNumLabel.setMaximumSize(new Dimension(300, 20));
-        //This method creates the border around the label
-        //healthNumLabel.setBorder(BorderFactory.createCompoundBorder(
-            //BorderFactory.createLineBorder(Color.RED), healthNumLabel.getBorder()));
-
-        //Create moneyLabel
-        moneyLabel = new JLabel("Money:");
-        moneyLabel.setForeground(Color.GREEN);
-        moneyLabel.setFont(new Font(moneyLabel.getFont().getName(), Font.PLAIN, 16));
-        moneyLabel.setPreferredSize(new Dimension(95, 20));
-        moneyLabel.setMinimumSize(new Dimension(300, 20));
-        moneyLabel.setMaximumSize(new Dimension(300, 20));
-
-        //Create moneyNumLabel
-        moneyNumLabel = new JLabel(String.format("$%d", data.getMoney()));
-        moneyNumLabel.setForeground(Color.GREEN);
-        moneyNumLabel.setFont(new Font(moneyLabel.getFont().getName(), Font.PLAIN, 16));
-        moneyNumLabel.setMinimumSize(new Dimension(600, 20));
-        moneyNumLabel.setMaximumSize(new Dimension(600, 20));
-        //This method creates the border around the label
-        //moneyNumLabel.setBorder(BorderFactory.createCompoundBorder(
-            //BorderFactory.createLineBorder(Color.GREEN), moneyNumLabel.getBorder()));
-
-        //Create healthLabel
-        roundLabel = new JLabel("Round:");
-        roundLabel.setForeground(Color.ORANGE);
-        roundLabel.setFont(new Font(roundLabel.getFont().getName(), Font.PLAIN, 16));
-        roundLabel.setPreferredSize(new Dimension(95, 20));
-        roundLabel.setMinimumSize(new Dimension(300, 20));
-        roundLabel.setMaximumSize(new Dimension(300, 20));
-
-        //Create healthNumLabel
-        roundNumLabel = new JLabel(String.format("%d", data.getRound()));
-        roundNumLabel.setForeground(Color.ORANGE);
-        roundNumLabel.setFont(new Font(roundNumLabel.getFont().getName(), Font.PLAIN, 16));
-        roundNumLabel.setMinimumSize(new Dimension(300, 20));
-        roundNumLabel.setMaximumSize(new Dimension(300, 20));
-
-        //Will likely be placed on the left hand side (use RIGHT_ALIGNMENT)
-        healthLabel.setAlignmentX(RIGHT_ALIGNMENT);
-        healthNumLabel.setAlignmentX(RIGHT_ALIGNMENT);
-        moneyLabel.setAlignmentX(RIGHT_ALIGNMENT);
-        moneyNumLabel.setAlignmentX(RIGHT_ALIGNMENT);
-        roundLabel.setAlignmentX(RIGHT_ALIGNMENT);
-        roundNumLabel.setAlignmentX(RIGHT_ALIGNMENT);
+        healthLabel = createLabel("Health: ", Color.RED);
+        healthNumLabel = createNumLabel("%d", data.getHealth(), Color.RED);
+        moneyLabel = createLabel("Money: ", Color.GREEN);
+        moneyNumLabel = createNumLabel("$%d", data.getMoney(), Color.GREEN);
+        roundLabel = createLabel("Round: ", Color.ORANGE);
+        roundNumLabel = createNumLabel("%d", data.getRound(), Color.ORANGE);
 
         //Text panel label
         String info = "Description of option selected";
@@ -217,7 +192,7 @@ public class GameWindow extends JFrame
         //This puts the buttons at the bottom of the tower panel
         playButton.setAlignmentX(CENTER_ALIGNMENT);
 
-        playButton.addActionListener(new ActionListener() {
+        playButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
@@ -242,6 +217,23 @@ public class GameWindow extends JFrame
                 }
             }
         });
+
+        mainMenuButton = new JButton("Main Menu");
+        mainMenuButton.setMinimumSize(new Dimension(300, 25));
+        mainMenuButton.setMaximumSize(new Dimension(300, 25));
+        mainMenuButton.setAlignmentX(CENTER_ALIGNMENT);
+
+        mainMenuButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent arg0)
+            {
+                //Start a new round based on currentRound
+                gameClock.stop(); // ??
+                frame.dispose();
+                new TitleWindow();
+            }
+        });
+
     }
 
     private void createList()
@@ -250,13 +242,15 @@ public class GameWindow extends JFrame
         //This will check if theres a tower in the cell, if there is sell it
         //For half of it's original cost
         listModel.addElement("Select");
-        listModel.addElement("Sell Tower");
-        listModel.addElement("Upgrade Tower");
+        listModel.addElement("Sell");
+        listModel.addElement("Upgrade");
         listModel.addElement("Basic");
         listModel.addElement("Melee");
         listModel.addElement("Sniper");
+        listModel.addElement("Speed");
         listModel.addElement("Splash");
         towerList = new JList(listModel);
+
         towerList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e)
@@ -265,65 +259,84 @@ public class GameWindow extends JFrame
                 int cost, attack, range, speed, upgrade, sell, level;
                 String info = "";
                 String des = "";
-                switch( (String) towerList.getSelectedValue())
+                String option = (String) towerList.getSelectedValue();
+                switch(option)
                 {
                     case "Select":
                     {
                         des = "Select a tower to view it's attributes";
-                        //6 things
                         info = "Attributes appear here";
                         break;
                     }
-                    case "Sell Tower":
+                    case "Sell":
                     {
                         des = "Sells a tower";
-                        info = "Returns 1/4 of its cost";
+                        info = "Returns 1/4 the money spent on the tower";
                         break;
                     }
 
-                    case "Upgrade Tower":
+                    case "Upgrade":
                     {
-                        des = "Upgrades = tower's cost * upgrade level";
-                        info = "Attack value increase  Basic: 2  Melee: 4  Sniper: 3  Splash: 2";
+                        des = "Upgrades = tower's initial cost * upgrade level";
+                        info = "Attack value increase  Basic: 4  Melee: 8  Sniper: 4  Speed: 2  Splash: 2";
                         break;
                     }
 
                     case "Basic":
                     {
-                        cost = 150;
-                        attack = 4;
-                        range = 3;
-                        speed = 5;
-                        des = "Tower with all moderate stats";
+                        Tower t = new Tower(option, 0, 0);
+                        cost = t.getCost();
+                        attack = t.getAttack();
+                        range = t.getRange();
+                        speed = t.getSpeed();
+                        des = "Cost efficient tower with all moderate stats";
                         info = String.format("Cost: $%d   Attack: %d   Range: %d   Speed: %d", cost, attack, range, speed);
                         break;
                     }
+
                     case "Melee":
                     {
-                        cost = 200;
-                        attack = 8;
-                        range = 1;
-                        speed = 6;
-                        des = "Tower with a high attack, small range, and moderate fire rate";
+                        Tower t = new Tower(option, 0, 0);
+                        cost = t.getCost();
+                        attack = t.getAttack();
+                        range = t.getRange();
+                        speed = t.getSpeed();
+                        des = "Tower with a very high attack, small range, and moderate fire rate";
                         info = String.format("Cost: $%d   Attack: %d   Range: %d   Speed: %d", cost, attack, range, speed);
                         break;
                     }
+
                     case "Sniper":
                     {
-                        cost = 250;
-                        attack = 6;
-                        range = 5;
-                        speed = 6;
-                        des = "Tower with a moderate attack, large range, but slow fire rate";
+                        Tower t = new Tower(option, 0, 0);
+                        cost = t.getCost();
+                        attack = t.getAttack();
+                        range = t.getRange();
+                        speed = t.getSpeed();
+                        des = "Tower with a high attack, large range, but slow fire rate";
                         info = String.format("Cost: $%d   Attack: %d   Range: %d   Speed: %d", cost, attack, range, speed);
                         break;
                     }
+
+                    case "Speed":
+                    {
+                        Tower t = new Tower(option, 0, 0);
+                        cost = t.getCost();
+                        attack = t.getAttack();
+                        range = t.getRange();
+                        speed = t.getSpeed();
+                        des = "Tower with a low attack, low range, but fast fire rate";
+                        info = String.format("Cost: $%d   Attack: %d   Range: %d   Speed: %d", cost, attack, range, speed);
+                        break;
+                    }
+
                     case "Splash":
                     {
-                        cost = 300;
-                        attack = 3;
-                        range = 1;
-                        speed = 10;
+                        Tower t = new Tower(option, 0, 0);
+                        cost = t.getCost();
+                        attack = t.getAttack();
+                        range = t.getRange();
+                        speed = t.getSpeed();
                         des = "Tower that hits all enemies in its range with a low attack, small range, but slow fire rate";
                         info = String.format("Cost: $%d   Attack: %d   Range: %d   Speed: %d", cost, attack, range, speed);
                         break;
@@ -347,6 +360,7 @@ public class GameWindow extends JFrame
                 {
                     playButton.setText("Play");
                 }
+                
                 else
                 {
                     mapComponent.repaint();
@@ -371,7 +385,7 @@ public class GameWindow extends JFrame
                 }
             }
         };
-        gameClock = new Timer(80, taskPerformer);
+        gameClock = new Timer(60, taskPerformer);
     }
 }
 

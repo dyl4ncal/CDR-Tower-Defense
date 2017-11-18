@@ -25,7 +25,7 @@ public class MapData
     private int numEnemies = 0;
     private int spawnInterval = 10;
     private int health = 100;
-    private int money = 400;
+    private int money = 500;
     private boolean healthChanged = false;
     private boolean moneyChanged = false;
 
