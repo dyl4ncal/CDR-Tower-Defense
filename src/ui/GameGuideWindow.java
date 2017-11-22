@@ -73,7 +73,7 @@ public class GameGuideWindow extends JFrame
                 + "tower type and then clicking where you want it located."
                 + "Defeat enemies to generate more $$$" + "<br />" +
         "<br />5.) If you are confident that the CPU is well protected and don't need to carefully plan "
-                + "anymore defensive moves, there is a 'Faster' button at the bottom right which speeds up time." + "<br />" +
+                + "anymore defensive moves, there is a 'Faster' button which replaces 'Play' to speed up enemies." + "<br />" +
         "<br />6.) On the tower panel will be 3 options: 'Select', 'Sell', and 'Upgrade' " +
          "'Select' shows all the attributes of a tower"+
          "'Sell' will sell a tower for 1/4 the original cost * upgrades"+

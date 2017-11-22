@@ -119,10 +119,10 @@ public class Tower extends Tile
             {
                 myType = TowerType.SNIPER;
                 myColor = new Color(128, 255, 0);
-                cost = 250;
+                cost = 200;
                 attack = 7;
                 range = 5;
-                speed = 6;
+                speed = 7;
                 break;
             }
 

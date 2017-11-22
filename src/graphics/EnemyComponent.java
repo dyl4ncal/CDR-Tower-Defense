@@ -10,6 +10,7 @@ package graphics;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import javax.swing.JComponent;
+import java.lang.Math;
 
 import entities.Path;
 
@@ -24,14 +25,19 @@ public class EnemyComponent extends JComponent
     private boolean dirChanged;
     private boolean isAlive = true;
     private Path currentLocation;
+    private String myType;
+    private float hue = 0;
+    private float saturation = 1;
+    private float brightness = 1;
     
-    public EnemyComponent(Path head, int h)
+    public EnemyComponent(Path head, int h, String t)
     {
         myHealth = h;
         currentLocation = head;
         currentDir = currentLocation.getMyDirection();
         lastDir = currentDir;
         setCoords();
+        myType = t;
     }
 
     @Override
@@ -39,14 +45,25 @@ public class EnemyComponent extends JComponent
     @Override
     public int getY() {return y / 50;}
     public boolean isAlive() {return isAlive;}
+    public String getType(){return myType;}
 
     public void draw(Graphics2D g2)
     {
         //As of right now, an enemy will be a circle in the center of the path
         Ellipse2D.Double e = new Ellipse2D.Double(x + 10, y + 10, 30, 30);
-        g2.setColor(Color.BLACK);
-        g2.fill(e);
-        g2.setColor(Color.CYAN);
+        if(myType.equals("B"))
+        {
+            g2.setColor(new Color(Color.HSBtoRGB(hue, saturation, brightness)));
+            g2.fill(e);
+            g2.setColor(Color.BLACK);
+            hue = (float) ((hue + Math.PI/100.0) % 1.0);
+        }
+        else
+        {
+            g2.setColor(Color.BLACK);
+            g2.fill(e);
+            g2.setColor(Color.CYAN);
+        }
 
             if(myHealth < 10)
             {
@@ -55,12 +72,12 @@ public class EnemyComponent extends JComponent
 
             else if(myHealth > 9999)
             {
-                g2.drawString(String.format("%d", 9999), x + 12, y + 30);
+                g2.drawString(String.format("%d", 9999), x + 11, y + 30);
             }
 
-            else if(myHealth < 9999 && myHealth > 99)
+            else if(myHealth > 999 && myHealth <= 9999)
             {
-                g2.drawString(String.format("%d", myHealth), x + 12, y + 30);
+                g2.drawString(String.format("%d", myHealth), x + 11, y + 30);
             }
 
             else if(myHealth < 100)

@@ -39,7 +39,9 @@ public class MapComponent extends JComponent
     private int numEnemies = 0;
     private int enemyHealth = 5;
     private int spawnFrequency = 10;
+    private int bossRounds = 10;  //Number of rounds between bosses
     private boolean roundOver = true;
+    private String enemyType;
 
     public static BufferedImage getBaseImage() {return baseImage;}
     public static BufferedImage getTileImage() {return tileImage;}
@@ -160,7 +162,7 @@ public class MapComponent extends JComponent
     public void createWave()
     {
         //Boss wave
-        if(data.getRound() % 10 == 0)
+        if(data.getRound() % bossRounds == 0)
         {
             createBossWave();
         }
@@ -172,8 +174,9 @@ public class MapComponent extends JComponent
             enemyTicker = 1;
             //Should be a better function tbh
             numEnemies = 8 + ((data.getRound() - 1) * 5 / 2);
-            enemyHealth = 25 + (int) (Math.pow(data.getRound() - 1, 1.7) + (data.getRound() - 1) * 3);
+            enemyHealth = 25 + (int) (Math.pow(data.getRound() - 1, 1.75) + (data.getRound() - 1) * 3);
             roundOver = false;
+            enemyType = "R";
         }
     }
 
@@ -184,8 +187,9 @@ public class MapComponent extends JComponent
         enemiesSpawned = 0;
         enemyTicker = 1;
         numEnemies = 1;
-        enemyHealth = 550 + (int) (Math.pow(data.getRound(), 2.2) + (data.getRound()) * 4);
+        enemyHealth = 525 + (int) (Math.pow(data.getRound(), 2.25) + (data.getRound()) * 4);
         roundOver = false;
+        enemyType = "B";
     }
 
     //Draws all the enemies on the map
@@ -199,7 +203,7 @@ public class MapComponent extends JComponent
         {
             if (numEnemies != 0 && enemyTicker > 0 && (enemyTicker == spawnFrequency || enemiesSpawned == 0))
             {
-                enemyList.add(new EnemyComponent(data.getHead(), enemyHealth));
+                enemyList.add(new EnemyComponent(data.getHead(), enemyHealth, enemyType));
                 enemiesSpawned++;
                 enemyTicker = 1;
 
