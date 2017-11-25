@@ -1,6 +1,27 @@
 /**
+ * Tower class holds all the information about towers
+ * Currently there are 5 tower types, each with different attributes
+ * Able to combine 2 different tower types to make an even greater tower
+ * This is my ranking system for the overall best combinations
+ * Short description for each
  *
- * @author Colton
+ * Antivirus tower combinations
+ * #7 Antivirus and Firewall   -Kills bosses fairly fast
+ * #2 Antivirus and Surge  -Good for Killing groups of enemies
+ * #9 Antivirus and Quarantine  -A Quarantine tower with increased speed
+ * #10 Antivirus and Encryption  -Only gives slights increases to speed and attack
+ *
+ * Firewall tower combinations
+ * #3 Firewall and Surge  -Kills enemies at close range quickly
+ * #4 Firewall and Encryption   -Insanely fast at killing bosses at close range
+ * #8 Firewall and Quarantine  -Good for killing bosses at long distance
+ *
+ * Encryption tower combinations
+ * #5 Encryption and Quarantine  -Long range tower that hits very fast
+ * #6 Encryption and Surge  -Hits groups of enemies quickly
+ *
+ * Quarantine tower combinations
+ * #1 Quarantine and Surge -Best tower at killing lots of enemies
  */
 
 package entities;
@@ -10,54 +31,27 @@ import java.awt.Color;
 
 import java.util.ArrayList;
 
-/**
- * Tower class holds all the information about towers
- * Currently there are 5 tower types, each with different attributes
- * Able to combine 2 towers to make an even greater tower
- * This is my ranking system for the overall best combinations
- * Short description for each
- *
- * Basic tower combinations
- * #7 Basic and Melee   -Kills bosses fairly fast
- * #2 Basic and Splash  -Good for Killing groups of enemies
- * #9 Basic and Sniper  -A sniper tower with increased speed
- * #10 Basic and Speed  -Only gives slights increases to speed and attack
- *
- * Melee tower combinations
- * #3 Melee and Splash  -Kills enemies at close range quickly
- * #4 Melee and Speed   -Insanely fast at killing bosses at close range
- * #8 Melee and Sniper  -Good for killing bosses at long distance
- *
- * Speed tower combinations
- * #5 Speed and Sniper  -Long range tower that hits very fast
- * #6 Speed and Splash  -Hits groups of enemies quickly
- *
- * Sniper tower combinations
- * #1 Sniper and Splash -Best tower at killing lots of enemies 
- *
- * @author Raymond
- */
-
 public class Tower extends Tile
 {
     public enum TowerType
     {
-        BASIC, MELEE, SNIPER, SPEED, SPLASH,
+        ANTIVIRUS, FIREWALL, QUARANTINE, ENCRYPTION, SURGE,
     }
 
     private TowerType myType;
     private Color myColor;
-    private TowerType second; //The second tower's type
+    private Color[] colorArray;
+    private TowerType second = null; //The second tower's type
     private Color secondColor; //The inside color
     private Boolean canCombine = true; //Can only combine once
-    private Boolean isSelected;
     private int cost;
     private int attackTicker = 1;
     private int range;
     private int attack;
     private int speed;
+    private int attackIncrease;
     private int sellValue;
-    private int upgradeLevel = 1;
+    private int level = 1;
     private int myX, myY;
 
     public Tower(String type, int y, int x)
@@ -65,95 +59,67 @@ public class Tower extends Tile
         super(y, x);
         myX = x;
         myY = y;
-        second = null;
+
         //Set the attributes of the tower
         //The speed may have to change relative to the clock/ticker
         switch (type)
         {
-            //Hits from a fair distance
-            //Low amount of damage
-            //Low attack speed
-            //Cost is low
-            case "Basic":
+            //Hits from a fair distance, low amount of damage, low attack speed, cost is low
+            case "Antivirus":
             {
-                myType = TowerType.BASIC;
-                myColor = Color.YELLOW;
+                myType = TowerType.ANTIVIRUS;
                 cost = 150;
                 attack = 5;
                 range = 3;
                 speed = 4;
+                attackIncrease = 5;
                 break;
             }
-
-            //Short range
-            //High attack
-            //Moderate attack speed
-            //Cost is moderate
-            case "Melee":
+            //Short range, high attack, moderate attack speed, cost is moderate
+            case "Firewall":
             {
-                myType = TowerType.MELEE;
-                myColor = Color.RED;
+                myType = TowerType.FIREWALL;
                 cost = 200;
                 attack = 12;
                 range = 1;
                 speed = 6;
+                attackIncrease = 10;
                 break;
             }
-
-            case "Speed":
+            //Highest range, moderate damage, slow attack speed, cost is moderately high
+            case "Quarantine":
             {
-                myType = TowerType.SPEED;
-                myColor = Color.WHITE;
-                cost = 200;
-                attack = 3;
-                range = 1;
-                speed = 2;
-                break;
-            }
-
-            //Highest range
-            //Moderate damage
-            //Slow attack speed 
-            //Cost is moderately high
-            case "Sniper":
-            {
-                myType = TowerType.SNIPER;
-                myColor = new Color(128, 255, 0);
+                myType = TowerType.QUARANTINE;
                 cost = 200;
                 attack = 7;
                 range = 5;
                 speed = 7;
+                attackIncrease = 5;
                 break;
             }
-
-            //Low range
-            //Low damage
-            //Slow attack speed
-            //Hits all in its radius
-            //Cost is high
-            case "Splash":
+            case "Encryption":
             {
-                myType = TowerType.SPLASH;
-                myColor = Color.CYAN;
+                myType = TowerType.ENCRYPTION;
+                cost = 200;
+                attack = 3;
+                range = 1;
+                speed = 2;
+                attackIncrease = 3;
+                break;
+            }
+            //Low range, low damage, slow attack speed, hits all in its radius, cost is high
+            case "Surge":
+            {
+                myType = TowerType.SURGE;
                 cost = 300;
                 attack = 3;
                 range = 1;
                 speed = 10;
-                break;
-            }
-
-            //Default is the basic tower type
-            default:
-            {
-                myType = TowerType.BASIC;
-                myColor = Color.YELLOW;
-                cost = 150;
-                attack = 5;
-                range = 3;
-                speed = 4;
+                attackIncrease = 2;
                 break;
             }
         }
+        setColors();
         sellValue = cost;
     }
 
@@ -161,87 +127,28 @@ public class Tower extends Tile
     public TileType getTileType() {return TileType.TOWER;}
     public TowerType getTowerType() {return myType;}
     public int getCost() {return cost;}
-    public int getUpgradeLevel(){return upgradeLevel;}
-    public int getUpgradeCost(){return cost * upgradeLevel;}
+    public int getLevel(){return level;}
+    public int getUpgradeCost(){return cost * level;}
     public Color getColor(){return myColor;}
     public Color getSecondColor(){return secondColor;}
+    public Boolean canCombine(TowerType t) {return second == null && level == 4 && t != myType;}
 
     //For the Select method
     public int getAttack(){return attack;}
     public int getRange(){return range;}
     public int getSpeed(){return speed;}
-    public int getSellValue(){return sellValue/4;}
+    public int getSellValue(){return sellValue / 4;}
 
     public int getX(){return myX;}
     public int getY(){return myY;}
 
-    public Boolean isSelected(){return isSelected;}
-    public void setIsSelected(Boolean b)
-    {
-        isSelected = b;
-    }
-
-    //Upgrading a tower increases its attack by 1 or 2 (splash is 1, rest are 2)
+    //Upgrading a tower increases its attack by 1 or 2 (Surge is 1, rest are 2)
     public void upgrade()
     {
-        switch(myType)
-        {
-            case BASIC:
-            {
-                Color[] colorArray = {Color.ORANGE, new Color(255, 142, 32), new Color(255, 77, 0)};
-                myColor = colorArray[upgradeLevel - 1]; //new Color(255, 50, 0);
-                attack += 5;
-                sellValue += cost * upgradeLevel;
-                break;
-            }
-
-            case MELEE:
-            {
-                Color[] colorArray = {new Color(255, 0, 80), new Color(204, 0, 102), new Color(153, 0, 153)};
-                myColor = colorArray[upgradeLevel - 1];
-                attack += 10;
-                sellValue += cost * upgradeLevel;
-                break;
-            }
-
-            case SNIPER:
-            {
-                Color[] colorArray = {Color.GREEN, new Color(0, 204, 0), new Color(0, 132, 0)};
-                myColor = colorArray[upgradeLevel - 1];
-                //new Color(0, 175, 0);
-                attack += 5;
-                sellValue += cost * upgradeLevel;
-                break;
-            }
-
-            case SPEED:
-            {
-                Color[] colorArray = {Color.LIGHT_GRAY, Color.GRAY, Color.DARK_GRAY};
-                myColor = colorArray[upgradeLevel - 1];
-                attack += 3;
-                sellValue += cost * upgradeLevel;
-                break;
-            }
-
-            case SPLASH:
-            {
-                Color[] colorArray = {new Color(0, 163, 163), new Color(0, 102, 204), Color.BLUE};
-                myColor = colorArray[upgradeLevel - 1];
-                attack += 2;
-                sellValue += cost * upgradeLevel;
-                break;
-            }
-
-            default:
-            {
-                Color[] colorArray = {Color.ORANGE, new Color(255, 142, 32), new Color(255, 77, 0)};
-                myColor = colorArray[upgradeLevel - 1];
-                attack += 5;
-                sellValue += cost * upgradeLevel;
-                break;
-            }
-        }
-        upgradeLevel++;
+        myColor = colorArray[level - 1]; //new Color(255, 50, 0);
+        attack += attackIncrease;
+        sellValue += cost * level;
+        level++;
     }
 
     //This method combines an existing tower with another tower
@@ -266,18 +173,17 @@ public class Tower extends Tile
         //To get accurate sell and upgrade values
         cost = t.getCost();
         sellValue += 2000;
+
         //Set upgrade level back to 1
-        upgradeLevel = 1;
-        secondColor = myColor;
-        myColor = t.getColor();
+        level = 1;
+
         //Set second to the current tower type
         second = myType;
         myType = t.getTowerType();
-    }
 
-    public Boolean canCombine()
-    {
-        return (canCombine && upgradeLevel == 4);
+        //Change color set
+        secondColor = myColor;
+        setColors();
     }
 
     public int attack(ArrayList<EnemyComponent> enemyList)
@@ -303,7 +209,6 @@ public class Tower extends Tile
                         {
                             loot += 90;
                         }
-
                         else
                         {
                             loot += 8;
@@ -312,8 +217,9 @@ public class Tower extends Tile
                         enemyList.remove(i);
                         i--;
                     }
-                    //Splash towers attack everything in the list
-                    if (myType != TowerType.SPLASH && second != TowerType.SPLASH)
+
+                    //Surge towers attack everything in the list
+                    if (myType != TowerType.SURGE && second != TowerType.SURGE)
                     {
                         break;
                     }
@@ -326,6 +232,43 @@ public class Tower extends Tile
         }
 
         return loot;
+    }
+
+    private void setColors()
+    {
+        switch (myType)
+        {
+            case ANTIVIRUS:
+            {
+                myColor = Color.YELLOW;
+                colorArray = new Color[]{Color.ORANGE, new Color(255, 142, 32), new Color(255, 77, 0)};
+                break;
+            }
+            case FIREWALL:
+            {
+                myColor = Color.RED;
+                colorArray = new Color[]{new Color(255, 0, 80), new Color(204, 0, 102), new Color(153, 0, 153)};
+                break;
+            }
+            case QUARANTINE:
+            {
+                myColor = new Color(128, 255, 0);
+                colorArray = new Color[]{Color.GREEN, new Color(0, 204, 0), new Color(0, 132, 0)};
+                break;
+            }
+            case ENCRYPTION:
+            {
+                myColor = Color.WHITE;
+                colorArray = new Color[]{Color.LIGHT_GRAY, Color.GRAY, Color.DARK_GRAY};
+                break;
+            }
+            case SURGE:
+            {
+                myColor = Color.CYAN;
+                colorArray = new Color[]{new Color(0, 163, 163), new Color(0, 102, 204), Color.BLUE};
+                break;
+            }
+        }
     }
 }
 

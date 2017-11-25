@@ -1,3 +1,7 @@
+/**
+ * This class represents the Base path, only has coords
+ */
+
 package entities;
 
 public class Base extends Path

@@ -1,6 +1,5 @@
 /**
- *
- * @author Colton
+ * This class represents a Path tile, connects to another path and has direction
  */
 
 package entities;
@@ -9,7 +8,7 @@ public class Path extends Tile
 {
     public enum Direction
     {
-        UP, RIGHT, DOWN, LEFT;
+        UP, RIGHT, DOWN, LEFT
     }
 
     private Path myNext;

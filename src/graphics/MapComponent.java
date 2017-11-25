@@ -1,67 +1,57 @@
 /**
- * This class is for creating the map
- * And for creating enemies that are on the map
- * I'm not sure how towers will interact with this
- *
- * @author Raymond
+ * This class represents the graphical component of the map and
+ * controls the creation/deletion/modification of enemies and tiles
  */
 
 package graphics;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import javax.swing.*;
-import java.lang.Math;
-
+import entities.MapData;
 import entities.Path;
 import entities.Tile;
 import entities.Tower;
-import entities.MapData;
 
-import static entities.Tile.TileType.*;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import static entities.Tile.TileType.TILE;
+import static entities.Tile.TileType.TOWER;
 
 public class MapComponent extends JComponent
 {
     private static BufferedImage baseImage, tileImage;
 
-    private int x, y, s, mapRows, mapCols;
+    private final int SPAWN_INTERVAL = 10;    //Number of clock ticks between enemy spawns
+    private final int BOSS_ROUNDS = 10; //Number of rounds between bosses
+
     private MapData data;
+    private TileComponent[][] componentMat;
     private ArrayList<EnemyComponent> enemyList;
     private ArrayList<Tower> towerList;
-    private Tower previousTower;
-    private TileComponent[][] componentMat;
+    private Rectangle selectedRange = null;
+    private String enemyType;
     private int enemyTicker = 1;
     private int enemiesSpawned = 0;
     private int numEnemies = 0;
     private int enemyHealth = 5;
-    private int spawnFrequency;
-    private final int BOSS_ROUNDS = 10;  //Number of rounds between bosses
-    private boolean roundOver = true;
-    private String enemyType;
 
     public static BufferedImage getBaseImage() {return baseImage;}
-    public static BufferedImage getTileImage() {return tileImage;}
 
-    //Create a cell using rows, columns and MapData
     public MapComponent(MapData d)
     {
         data = d;
-        mapRows = d.getNumRows();
-        mapCols = d.getNumCols();
         enemyList = new ArrayList<>();
         towerList = new ArrayList<>();
-        numEnemies = d.getNumEnemies();
-        spawnFrequency = d.getSpawnInterval();
         String background = "images/background.png";
 
         try
         {
             baseImage = ImageIO.read(new File("images/cpu.png"));
-            if(mapRows > 11 || mapCols > 13)
+            if(data.getNumRows() > 11 || data.getNumCols() > 13)
             {
                 background = "images/background2.png";
             }
@@ -75,21 +65,6 @@ public class MapComponent extends JComponent
         buildMatrix();
     }
 
-    public boolean isRoundOver() {return roundOver;}
-
-    private void buildMatrix()
-    {
-        componentMat = new TileComponent[mapRows][mapCols];
-
-        for (int i = 0; i < mapRows; i++)
-        {
-            for (int j = 0; j < mapCols; j++)
-            {
-                componentMat[i][j] = new TileComponent(data.getTile(i, j), i, j);
-            }
-        }
-    }
-
     @Override
     public void paintComponent(Graphics g)
     {
@@ -97,7 +72,7 @@ public class MapComponent extends JComponent
 
         draw(g2);
 
-        if (!roundOver)
+        if (!data.getRoundOver())
         {
             moveEnemies();
             drawEnemies(g2);
@@ -112,24 +87,18 @@ public class MapComponent extends JComponent
         drawPath(g2);
 
         //This will draw the non-path tiles
-        for (int i = 0; i < mapRows; i++)
+        for (int i = 0; i < data.getNumRows(); i++)
         {
-            for (int j = 0; j < mapCols; j++)
+            for (int j = 0; j < data.getNumCols(); j++)
             {
                 componentMat[i][j].draw(g2);
             }
         }
 
         //Logic to draw the radius of the tower
-        //The radius doesn't seem to accurately
-        //represent the true range of the tower
-        if(previousTower != null && previousTower.isSelected())
+        if(selectedRange != null)
         {
-            int range = previousTower.getRange();
-            g2.setColor(Color.RED);
-            int x = (previousTower.getX() * 50) - (range * 50);
-            int y = (previousTower.getY() * 50) - (range * 50);
-            g2.drawRect(x + 1, y + 1, 50 * (range * 2 + 1)-2, 50 * (range * 2 + 1)-2);
+            drawRange(g2);
         }
     }
 
@@ -180,33 +149,26 @@ public class MapComponent extends JComponent
     //This method creates a new wave of enemies depending on current round
     public void createWave()
     {
+        enemiesSpawned = 0;
+        enemyTicker = 1;
+
         //Boss wave
         if(data.getRound() % BOSS_ROUNDS == 0)
         {
-            createBossWave();
+            numEnemies = 1;
+            enemyHealth = 525 + (int) (Math.pow(data.getRound(), 2.45) + (data.getRound()) * 3);
+            enemyType = "B";
         }
 
         //Normal enemy wave
         else
         {
-            enemiesSpawned = 0;
-            enemyTicker = 1;
-            //Should be a better function tbh
             numEnemies = 8 + ((data.getRound() - 1) * 5 / 2);
             enemyHealth = 25 + (int) (Math.pow(data.getRound() - 1, 1.8) + (data.getRound() - 1) * 2);
-            roundOver = false;
             enemyType = "R";
         }
-    }
 
-    private void createBossWave()
-    {
-        enemiesSpawned = 0;
-        enemyTicker = 1;
-        numEnemies = 1;
-        enemyHealth = 525 + (int) (Math.pow(data.getRound(), 2.45) + (data.getRound()) * 3);
-        roundOver = false;
-        enemyType = "B";
+        data.setRoundOver(false);
     }
 
     //Draws all the enemies on the map
@@ -216,9 +178,9 @@ public class MapComponent extends JComponent
         //If enemyTicker = 0, play hasn't been pressed
         //enemiesSpawned is used so we can remove enemies from the list
         //without making this method think it must spawn more
-        if (!roundOver)
+        if (!data.getRoundOver())
         {
-            if (numEnemies != 0 && enemyTicker > 0 && (enemyTicker == spawnFrequency || enemiesSpawned == 0))
+            if (numEnemies != 0 && enemyTicker > 0 && (enemyTicker == SPAWN_INTERVAL || enemiesSpawned == 0))
             {
                 enemyList.add(new EnemyComponent(data.getHead(), enemyHealth, enemyType));
                 enemiesSpawned++;
@@ -259,66 +221,46 @@ public class MapComponent extends JComponent
         //If there are no more enemies and all have spawned, the round is over
         if(enemyList.isEmpty() && enemiesSpawned == numEnemies)
         {
-            roundOver = true;
-            //Get money for finishing a round?
+            data.setRoundOver(true);
             data.incrementMoney(50 + (data.getRound() - 1) * 3);
             repaint();
         }
     }
 
-    public String selectTower(String s, int x, int y)
+    public String selectTower(int y, int x)
     {
         Tile tileSelected = data.getTile(y, x);
-        String info = "";
-        int sell, upgrade, attack, range, speed, level;
-
-        if(previousTower != null)
-        {
-            previousTower.setIsSelected(false);
-        }
+        String info;
 
         if(tileSelected.getTileType() == TOWER)
         {
             Tower t = ((Tower) tileSelected);
-            t.setIsSelected(true);
-            previousTower = t;
-            sell = t.getSellValue();
-            upgrade = t.getUpgradeCost();
-            attack = t.getAttack();
-            range = t.getRange();
-            speed = t.getSpeed();
-            level = t.getUpgradeLevel();
-            
-            if(t.getUpgradeLevel() == 4 && t.canCombine())
-            {
-                info = String.format("Sell Value: $%d   Combination Cost: $2000   Attack: %d   Range: %d   Speed: %d   Level: %d"
-                        , sell, attack, range, speed, level);
-            }
+            String cost;
 
-            else if(t.getUpgradeLevel() == 4 && !t.canCombine())
-            {
-                info = String.format("Sell Value: $%d   Combination Cost: N/A   Attack: %d   Range: %d   Speed: %d   Level: %d"
-                        , sell, attack, range, speed, level);
-            }
+            createRange(t);
             
+            if(t.getLevel() == 4)
+            {
+                cost = String.format("Combination Cost: %s", (t.canCombine(null) ? "$2000" : "N/A"));
+            }
             else
             {
-                info = String.format("Sell Value: $%d   Upgrade Cost: $%d   Attack: %d   Range: %d   Speed: %d   Level: %d"
-                        , sell, upgrade, attack, range, speed, level);
+                cost = String.format("Upgrade Cost: $%d", t.getUpgradeCost());
             }
+            info = String.format("Sell Value: $%d   %s   Attack: %d   Range: %d   Speed: %d   Level: %d",
+                    t.getSellValue(), cost, t.getAttack(), t.getRange(), t.getSpeed(), t.getLevel());
         }
-
         else
         {
             info = "Attributes appear here";
+            selectedRange = null;
+            repaint();
         }
-
-        repaint();
 
         return info;
     }
 
-    //Use this method to buy or sell tiles
+    //Use this method to buy, sell, upgrade, and combine tiles
     public void swapTile(String s, int y, int x)
     {
         Tile tileSelected = data.getTile(y, x);
@@ -328,19 +270,14 @@ public class MapComponent extends JComponent
             if(tileSelected.getTileType() == TOWER)
             {
                 data.incrementMoney(((Tower)tileSelected).getSellValue());
-                ((Tower) tileSelected).setIsSelected(false);
-                repaint();
                 towerList.remove(tileSelected);
+                selectedRange = null;
                 tileSelected = new Tile(y, x);
                 data.setTile(tileSelected, y, x);
                 componentMat[y][x] = new TileComponent(tileSelected, y, x);
-                if (roundOver)
-                {
-                    repaint();
-                }
+                repaint();
             }
         }
-
         //Upgrades cannot go past level 4
         else if(s.equals("Upgrade"))
         {
@@ -349,16 +286,13 @@ public class MapComponent extends JComponent
             {
                 //Upgrade the tower
                 Tower t = (Tower) tileSelected;
-                if(t.getUpgradeCost() <= data.getMoney() && t.getUpgradeLevel() < 4)
+                if(t.getUpgradeCost() <= data.getMoney() && t.getLevel() < 4)
                 {
                     data.decrementMoney(t.getUpgradeCost());
                     t.upgrade();
-                    t.setIsSelected(true);
-                    previousTower = t;
-                    repaint();
+                    createRange(t);
                 }
-
-                if(roundOver)
+                if(data.getRoundOver())
                 {
                     componentMat[y][x].draw((Graphics2D)getGraphics());
                 }
@@ -370,23 +304,15 @@ public class MapComponent extends JComponent
         {
             Tower t = (Tower) tileSelected;
             Tower towerSelected = new Tower(s, y, x);
-            //LOL this got to be pretty big
-            //This asks 
-            //Do you have enough money?
-            //Is the tower fully upgraded?
-            //Can the tower actually combine?
-            //Is the tower the same type as the one to combine? This could be removed
-            if(2000 <= data.getMoney() 
-               && t.getUpgradeLevel() == 4 
-               && t.canCombine() 
-               && t.getTowerType() != towerSelected.getTowerType())
+
+            if(2000 <= data.getMoney() && t.canCombine(towerSelected.getTowerType()))
             {
                 t.combineTower(towerSelected);
                 data.decrementMoney(2000);
-                repaint();
+                createRange(t);
             }
 
-            if(roundOver)
+            if(data.getRoundOver())
             {
                 componentMat[y][x].draw((Graphics2D)getGraphics());
             }
@@ -397,18 +323,51 @@ public class MapComponent extends JComponent
             Tower towerSelected = new Tower(s, y, x);
             if (tileSelected.getTileType() == TILE && towerSelected.getCost() <= data.getMoney())
             {
-                towerSelected.setIsSelected(true);
-                previousTower = towerSelected;
-                repaint();
+                createRange(towerSelected);
                 data.decrementMoney(towerSelected.getCost());
                 towerList.add(towerSelected);
                 data.setTile(towerSelected, y, x);
                 componentMat[y][x] = new TileComponent(towerSelected, y, x);
-                if(roundOver)
+                if(data.getRoundOver())
                 {
                     componentMat[y][x].draw((Graphics2D)getGraphics());
                 }
             }
         }
+    }
+
+    private void buildMatrix()
+    {
+        componentMat = new TileComponent[data.getNumRows()][data.getNumCols()];
+
+        for (int i = 0; i < data.getNumRows(); i++)
+        {
+            for (int j = 0; j < data.getNumCols(); j++)
+            {
+                componentMat[i][j] = new TileComponent(data.getTile(i, j), i, j);
+            }
+        }
+    }
+
+    private void createRange(Tower t)
+    {
+        if (selectedRange != null)
+        {
+            selectedRange = null;
+            repaint();
+        }
+
+        int range = t.getRange();
+        int x = (t.getX() * 50) - (range * 50);
+        int y = (t.getY() * 50) - (range * 50);
+        selectedRange = new Rectangle(x + 1, y + 1, 50 * (range * 2 + 1)-2, 50 * (range * 2 + 1)-2);
+
+        drawRange((Graphics2D)getGraphics());
+    }
+
+    private void drawRange(Graphics2D g2)
+    {
+        g2.setColor(Color.RED);
+        g2.draw(selectedRange);
     }
 }

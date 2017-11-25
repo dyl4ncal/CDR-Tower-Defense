@@ -1,8 +1,6 @@
 /**
- * This is a base class for defining the x & y
- * coordinates of locations on the map.
- *
- * @author Dylan
+ * This is a base class for defining the x & y coordinates of locations on the map.
+ * A standard tile.
  */
 
 package entities;
@@ -23,17 +21,8 @@ public class Tile
         this.x = x;
     }
 
-    public int getY()
-    {
-        return y;
-    }
-    public int getX()
-    {
-        return x;
-    }
-    public TileType getTileType()
-    {
-        return TileType.TILE;
-    }
+    public int getY() {return y;}
+    public int getX() {return x;}
+    public TileType getTileType() {return TileType.TILE;}
 }
 

@@ -1,3 +1,7 @@
+/**
+ * This class stores all graphical info for a given tile
+ */
+
 package graphics;
 
 import entities.*;
@@ -8,16 +12,16 @@ import java.awt.geom.Ellipse2D;
 
 public class TileComponent extends JComponent
 {
+    private final int TILE_LENGTH = 50;
+
     private Tile myTile;
-    private int myY, myX, mySize;
+    private int myY, myX;
 
     public TileComponent(Tile tile, int y, int x)
     {
         myTile = tile;
-        myY = y * 50;
-        myX = x * 50;
-        //Set the size of each tile to 50, just good practice to use a variable
-        mySize = 50;
+        myY = y * TILE_LENGTH;
+        myX = x * TILE_LENGTH;
     }
 
     public void draw(Graphics2D g2)
@@ -27,7 +31,7 @@ public class TileComponent extends JComponent
             case TILE:
             {
                 g2.setColor(Color.BLACK);
-                g2.drawRect(myX, myY, mySize, mySize);
+                g2.drawRect(myX, myY, TILE_LENGTH, TILE_LENGTH);
                 break;
             }
             //If we decide to add more towers
@@ -36,27 +40,22 @@ public class TileComponent extends JComponent
             {
                 Tower myTower = (Tower) myTile;
                 g2.setColor(myTower.getColor());
-                g2.fillRect(myX+7, myY+7, mySize-15, mySize-15);
+                g2.fillRect(myX+7, myY+7, TILE_LENGTH -15, TILE_LENGTH -15);
                 //Surround the tower with a border
                 g2.setColor(Color.BLACK);
-                g2.drawRect(myX+7, myY+7, mySize-15, mySize-15);
+                g2.drawRect(myX+7, myY+7, TILE_LENGTH -15, TILE_LENGTH -15);
                 
                 if(myTower.getSecondColor() != null)
                 {
                     //Draw a tower inside the other tower around it
                     g2.setColor(myTower.getSecondColor());
-                    g2.fillRect(myX+14, myY+14, mySize-28, mySize-28);
+                    g2.fillRect(myX+14, myY+14, TILE_LENGTH -28, TILE_LENGTH -28);
                     g2.setColor(Color.BLACK);
-                    g2.drawRect(myX+14, myY+14, mySize-28, mySize-28);
+                    g2.drawRect(myX+14, myY+14, TILE_LENGTH -28, TILE_LENGTH -28);
                 }
 
-                g2.drawRect(myX, myY, mySize, mySize);
-                g2.drawString(String.format("%d", myTower.getUpgradeLevel()), myX + 22, myY + 30);
-                break;
-            }
-
-            default:
-            {
+                g2.drawRect(myX, myY, TILE_LENGTH, TILE_LENGTH);
+                g2.drawString(String.format("%d", myTower.getLevel()), myX + 22, myY + 30);
                 break;
             }
         }
@@ -69,14 +68,12 @@ public class TileComponent extends JComponent
             case PATH:
             {
                 g2.setColor(Color.LIGHT_GRAY);
-                g2.fillRect(myX, myY, mySize, mySize);
+                g2.fillRect(myX, myY, TILE_LENGTH, TILE_LENGTH);
                 break;
             }
             case BASE:
             {
                 g2.drawImage(MapComponent.getBaseImage(), myX, myY, null);
-                /*g2.setColor(Color.BLACK);
-                g2.drawRect(myX, myY, mySize, mySize);*/
                 Ellipse2D.Double e = new Ellipse2D.Double(myX + 10, myY + 10, 30, 30);
                 g2.setColor(Color.BLACK);
                 g2.fill(e);

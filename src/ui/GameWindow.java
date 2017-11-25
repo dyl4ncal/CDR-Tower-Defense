@@ -1,26 +1,27 @@
+/**
+ * This class is for creating the game window, mapComponent, and side bars
+ * Basically, this is the class that has all the GUI components
+ */
+
 package ui;
+
+import entities.MapData;
+import entities.Tower;
+import graphics.MapComponent;
+import music.BackgroundMusic;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.event.*;
 import java.awt.*;
-
-import entities.Tower;
-import graphics.*;
-import entities.MapData;
-import music.*;
-
-/**
- * This class is for creating the game window and putting the mapComponent and side bars
- * Basically, this is the class that has all the GUI components
- *
- * @author Raymond and Colton
- */
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class GameWindow extends JFrame
 {
-    private BackGroundMusic bgm;
+    private BackgroundMusic bgm;
     private JFrame frame;
     private JPanel mapPanel, towerPanel, textPanel;
     private JLabel healthLabel, healthNumLabel; 
@@ -33,7 +34,6 @@ public class GameWindow extends JFrame
     private MapComponent mapComponent;
     private MapData data;
     private Timer gameClock;
-    private int currentRound = 0;
 
     public GameWindow(MapData md)
     {
@@ -49,9 +49,7 @@ public class GameWindow extends JFrame
         catch(Exception e){}
 
         //Set the specs of the game menu frame based on map data
-        int rows = md.getNumCols() * 50;
-        int cols = md.getNumRows() * 50;
-        frame.setSize(112 + rows, 90 + cols);
+        frame.setSize(112 + (data.getNumCols() * 50), 90 + (data.getNumRows() * 50));
         frame.setTitle("CDR Tower Defense");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -78,7 +76,7 @@ public class GameWindow extends JFrame
 
         try
         {
-            bgm = new BackGroundMusic();
+            bgm = new BackgroundMusic();
             bgm.play();
         }
         catch(Exception e){}
@@ -131,20 +129,19 @@ public class GameWindow extends JFrame
         mapComponent = new MapComponent(data);
         mapComponent.addMouseListener(new MouseAdapter(){
             @Override
-            public void mouseClicked(MouseEvent e){
-            try{
+            public void mouseClicked(MouseEvent e)
+            {
                 if(towerList.getSelectedValue().equals("Select"))
                 {
-                   String info = mapComponent.selectTower(towerList.getSelectedValue().toString(), e.getX() / 50, e.getY() / 50);
-                   textBox.setText(info);
+                    String info = mapComponent.selectTower(e.getY() / 50, e.getX() / 50);
+                    textBox.setText(info);
                 }
 
                 else if (towerList.getSelectedValue() != null)
                 {
                     mapComponent.swapTile(towerList.getSelectedValue().toString(), e.getY() / 50, e.getX() / 50);
                 }
-            }catch(Exception exp){}
-        }
+            }
         });
     }
 
@@ -207,7 +204,7 @@ public class GameWindow extends JFrame
             public void actionPerformed(ActionEvent arg0)
             {
                 //Start a new round based on currentRound
-                if(playButton.getText().equals("Play") && mapComponent.isRoundOver())
+                if(playButton.getText().equals("Play") && data.getRoundOver())
                 {
                     data.incrementRound();
                     mapComponent.createWave();
@@ -281,11 +278,11 @@ public class GameWindow extends JFrame
         listModel.addElement("Select");
         listModel.addElement("Sell");
         listModel.addElement("Upgrade");
-        listModel.addElement("Basic");
-        listModel.addElement("Melee");
-        listModel.addElement("Sniper");
-        listModel.addElement("Speed");
-        listModel.addElement("Splash");
+        listModel.addElement("Antivirus");
+        listModel.addElement("Firewall");
+        listModel.addElement("Quarantine");
+        listModel.addElement("Encryption");
+        listModel.addElement("Surge");
         towerList = new JList(listModel);
 
         towerList.addListSelectionListener(new ListSelectionListener() {
@@ -293,7 +290,7 @@ public class GameWindow extends JFrame
             public void valueChanged(ListSelectionEvent e)
             {
                 //Nothing yet
-                int cost, attack, range, speed, upgrade, sell, level;
+                int cost, attack, range, speed;
                 String info = "";
                 String des = "";
                 String option = (String) towerList.getSelectedValue();
@@ -315,11 +312,11 @@ public class GameWindow extends JFrame
                     case "Upgrade":
                     {
                         des = "Upgrades = tower's initial cost * upgrade level";
-                        info = "Attack value increase  Basic: 5  Melee: 10  Sniper: 5  Speed: 3  Splash: 2";
+                        info = "Attack value increase  Antivirus: 5  Firewall: 10  Quarantine: 5  Encryption: 3  Surge: 2";
                         break;
                     }
 
-                    case "Basic":
+                    case "Antivirus":
                     {
                         Tower t = new Tower(option, 0, 0);
                         cost = t.getCost();
@@ -331,7 +328,7 @@ public class GameWindow extends JFrame
                         break;
                     }
 
-                    case "Melee":
+                    case "Firewall":
                     {
                         Tower t = new Tower(option, 0, 0);
                         cost = t.getCost();
@@ -343,7 +340,7 @@ public class GameWindow extends JFrame
                         break;
                     }
 
-                    case "Sniper":
+                    case "Quarantine":
                     {
                         Tower t = new Tower(option, 0, 0);
                         cost = t.getCost();
@@ -355,7 +352,7 @@ public class GameWindow extends JFrame
                         break;
                     }
 
-                    case "Speed":
+                    case "Encryption":
                     {
                         Tower t = new Tower(option, 0, 0);
                         cost = t.getCost();
@@ -367,7 +364,7 @@ public class GameWindow extends JFrame
                         break;
                     }
 
-                    case "Splash":
+                    case "Surge":
                     {
                         Tower t = new Tower(option, 0, 0);
                         cost = t.getCost();
@@ -393,11 +390,10 @@ public class GameWindow extends JFrame
         ActionListener taskPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt)
             {
-                if(mapComponent.isRoundOver())
+                if(data.getRoundOver())
                 {
                     playButton.setText("Play");
                 }
-                
                 else
                 {
                     mapComponent.repaint();

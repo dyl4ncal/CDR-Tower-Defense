@@ -1,18 +1,16 @@
-package ui;
+/**
+ * This class is for creating the main menu screen
+ */
 
-import javax.swing.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.io.File;
+package ui;
 
 import entities.MapData;
 
-/**
- * This class is for creating the main menu screen
- * 
- * 
- * @author Raymond
- */
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 public class TitleWindow extends JFrame
 {

@@ -1,15 +1,13 @@
+/**
+ * This class is for creating & displaying the Game Guide window.
+ * After clicking this button, it allows the user to return to the
+ * starting window or exit out of the program.
+ */
+
 package ui;
 
 import javax.swing.*;
 import java.awt.*;
-
-/**
- * This class is for creating & displaying the Game Guide
- * window. after clicking this button, it allows the user 
- * to return to the starting window or exit out of the program.
- * 
- * @author Raymond & Dylan
- */
 
 public class GameGuideWindow extends JFrame
 {

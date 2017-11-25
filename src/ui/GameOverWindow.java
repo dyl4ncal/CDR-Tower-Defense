@@ -1,16 +1,15 @@
-package ui;
-
-import javax.swing.*;
-import java.awt.event.*;
-import java.awt.*;
-import entities.MapData;
-
 /**
  * This class is for creating the Game Over window
  * Allows the user to return to the starting window
  * Or exit out of the program
- * @author Raymond
  */
+
+package ui;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class GameOverWindow extends JFrame
 {

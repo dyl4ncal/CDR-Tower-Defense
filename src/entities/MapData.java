@@ -1,6 +1,6 @@
 /**
- *
- * @author Colton
+ * This class generates the an array of tiles based on an input file
+ * The data structure also holds info related to the state of the game
  */
 
 package entities;
@@ -13,25 +13,18 @@ import java.util.Scanner;
 import static entities.Path.Direction.*;
 import static entities.Tile.TileType.*;
 
-
 public class MapData
 {
     private Tile[][] tileMat;
-    private int numRows;
-    private int numCols;
     private Path pathHead;
     private int round = 0;
-    private int numEnemies = 0;
-    private int spawnInterval = 10;
     private int health = 100;
     private int money = 500;
     private boolean healthChanged = false;
     private boolean moneyChanged = false;
+    private boolean roundOver = true;
 
-    public MapData(String name)
-    {
-        buildTileMat(buildStringMat(name));
-    }
+    public MapData(String name) {buildTileMat(buildStringMat(name));}
 
     public Tile getTile(int y, int x) {return tileMat[y][x];}
     public void setTile(Tile newTile, int y, int x)
@@ -50,42 +43,40 @@ public class MapData
     }
 
     public Path getHead() {return pathHead;}
-    public int getNumRows() {return numRows;}
-    public int getNumCols() {return numCols;}
+    public int getNumRows() {return tileMat.length;}
+    public int getNumCols() {return tileMat[0].length;}
     public int getRound() {return round;}
-    public void incrementRound() {round++;}
-    public int getNumEnemies() {return numEnemies;}
-    public int getSpawnInterval(){return spawnInterval;}
     public int getHealth() {return health;}
-
-    public void decrementHealth(int i)
-    {
-        health -= i;
-        healthChanged = true;
-    }
+    public int getMoney() {return money;}
+    public boolean getRoundOver() {return roundOver;}
+    public void setRoundOver(boolean b) {roundOver = b;}
 
     public boolean getHealthChanged()
     {
-        if (!healthChanged)
-        {
-            return false;
-        }
-        else
+        if (healthChanged)
         {
             healthChanged = false;
             return true;
         }
+        return false;
     }
 
-    public int getMoney()
+    public boolean getMoneyChanged()
     {
-        return money;
+        if (moneyChanged)
+        {
+            moneyChanged = false;
+            return true;
+        }
+        return false;
     }
 
-    public void decrementMoney(int x)
+    public void incrementRound() {round++;}
+
+    public void decrementHealth(int x)
     {
-        money -= x;
-        moneyChanged = true;
+        health -= x;
+        healthChanged = true;
     }
 
     public void incrementMoney(int x)
@@ -94,19 +85,10 @@ public class MapData
         moneyChanged = true;
     }
 
-    //Copy paste of getHealthChanged
-    //Has the same functionality
-    public boolean getMoneyChanged()
+    public void decrementMoney(int x)
     {
-        if (!moneyChanged)
-        {
-            return false;
-        }
-        else
-        {
-            moneyChanged = false;
-            return true;
-        }
+        money -= x;
+        moneyChanged = true;
     }
 
     private String[][] buildStringMat(String name)
@@ -127,6 +109,11 @@ public class MapData
         while (in.hasNextLine())
         {
             lines.add(in.nextLine().split("\\s+"));
+        }
+
+        if (lines.isEmpty())
+        {
+            throw new IllegalArgumentException("File is empty");
         }
 
         //Check all rows are same length
@@ -167,6 +154,10 @@ public class MapData
                             throw new IllegalArgumentException("Too many end tiles!");
                         }
                     }
+                    else if (stringMat[i][j].equals("S"))
+                    {
+                        throw new IllegalArgumentException("Invalid format at (" + i + ", " + j + ")!");
+                    }
                 }
                 else if(stringMat[i][j].length() == 2)
                 {
@@ -201,17 +192,15 @@ public class MapData
     private void buildTileMat(String[][] stringMat)
     {
         //Conceptually an array has a[y][x]
-        numRows = stringMat.length;
-        numCols = stringMat[0].length;
-        tileMat = new Tile[numRows][numCols];
+        tileMat = new Tile[stringMat.length][stringMat[0].length];
 
         //Find start then build path
         boolean pathBuilt = false;
-        for (int i = 0; i < numRows; i++)
+        for (int i = 0; i < getNumRows(); i++)
         {
             if (!pathBuilt)
             {
-                for (int j = 0; j < numCols; j++)
+                for (int j = 0; j < getNumCols(); j++)
                 {
                     if(stringMat[i][j].charAt(0) == 'S')
                     {
@@ -232,9 +221,9 @@ public class MapData
         }
 
         //Fill the rest
-        for (int i = 0; i < numRows; i++)
+        for (int i = 0; i < getNumRows(); i++)
         {
-            for (int j = 0; j < numCols; j++)
+            for (int j = 0; j < getNumCols(); j++)
             {
                 if (tileMat[i][j] == null)
                 {

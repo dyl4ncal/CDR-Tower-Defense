@@ -1,17 +1,17 @@
 /**
-*@Author Raymond_Strohschein
-*/
-
-//Death sound is not my own, but Roblox's death noise 
+ * This defines a sound that can be played when an enemy dies
+ * Possible to add sounds by adding them to deathsounds
+ *
+ * Death sound is not our own, but Roblox's death noise
+ */
 
 package music;
 
-import java.io.File;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import java.util.Random;
 import java.io.File;
+import java.util.Random;
 
 public class DeathSound
 {
