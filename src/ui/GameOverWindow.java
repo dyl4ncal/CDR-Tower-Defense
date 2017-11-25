@@ -18,21 +18,21 @@ public class GameOverWindow extends JFrame
     private JPanel buttonPanel, titlePanel;
     private JLabel title, roundLabel;
     private JButton restartButton, exitButton;
-    private final MapData mapData;
+    private int roundLost;
 
-    public GameOverWindow(MapData data) 
+    public GameOverWindow(int r) 
     {
         frame = new JFrame();
 
         //Set the icon image
         try
         {
-            ImageIcon img = new ImageIcon("icon.png");
+            ImageIcon img = new ImageIcon("images/icon.png");
             frame.setIconImage(img.getImage());
         }
         catch(Exception e){}
 
-        mapData = data;
+        roundLost = r;
 
         createLabels();
         createButtons();
@@ -106,7 +106,7 @@ public class GameOverWindow extends JFrame
         title.setFont(new Font(title.getFont().getName(), Font.PLAIN, 42));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        roundLabel = new JLabel("CPU was infected on round "+mapData.getRound());
+        roundLabel = new JLabel("CPU was infected on round "+roundLost);
         roundLabel.setForeground(Color.RED);
         roundLabel.setFont(new Font(title.getFont().getName(), Font.PLAIN, 18));
         roundLabel.setAlignmentX(Component.CENTER_ALIGNMENT);

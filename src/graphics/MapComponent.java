@@ -38,8 +38,8 @@ public class MapComponent extends JComponent
     private int enemiesSpawned = 0;
     private int numEnemies = 0;
     private int enemyHealth = 5;
-    private int spawnFrequency = 10;
-    private int bossRounds = 10;  //Number of rounds between bosses
+    private int spawnFrequency;
+    private final int BOSS_ROUNDS = 10;  //Number of rounds between bosses
     private boolean roundOver = true;
     private String enemyType;
 
@@ -56,11 +56,16 @@ public class MapComponent extends JComponent
         towerList = new ArrayList<>();
         numEnemies = d.getNumEnemies();
         spawnFrequency = d.getSpawnInterval();
+        String background = "images/background.png";
 
         try
         {
-            baseImage = ImageIO.read(new File("cpu.png"));
-            tileImage = ImageIO.read(new File("background2.png"));
+            baseImage = ImageIO.read(new File("images/cpu.png"));
+            if(mapRows > 11 || mapCols > 13)
+            {
+                background = "images/background2.png";
+            }
+            tileImage = ImageIO.read(new File(background));
         }
         catch(IOException e)
         {
@@ -115,6 +120,9 @@ public class MapComponent extends JComponent
             }
         }
 
+        //Logic to draw the radius of the tower
+        //The radius doesn't seem to accurately
+        //represent the true range of the tower
         if(previousTower != null && previousTower.isSelected())
         {
             int range = previousTower.getRange();
@@ -148,8 +156,19 @@ public class MapComponent extends JComponent
             if (!enemyList.get(i).isAlive())
             {
                 enemyList.remove(i);
-                data.incrementMoney(8);
-                data.decrementHealth();
+
+                //If the round is a boss round and he hit us
+                if(data.getRound() % BOSS_ROUNDS == 0)
+                {
+                    data.decrementHealth(5);
+                    data.incrementMoney(60);
+                }
+                //Else its a regular round and an enemy hit us
+                else
+                {
+                    data.decrementHealth(1);
+                    data.incrementMoney(4);
+                }
             }
             else
             {
@@ -162,7 +181,7 @@ public class MapComponent extends JComponent
     public void createWave()
     {
         //Boss wave
-        if(data.getRound() % bossRounds == 0)
+        if(data.getRound() % BOSS_ROUNDS == 0)
         {
             createBossWave();
         }
@@ -174,20 +193,18 @@ public class MapComponent extends JComponent
             enemyTicker = 1;
             //Should be a better function tbh
             numEnemies = 8 + ((data.getRound() - 1) * 5 / 2);
-            enemyHealth = 25 + (int) (Math.pow(data.getRound() - 1, 1.75) + (data.getRound() - 1) * 3);
+            enemyHealth = 25 + (int) (Math.pow(data.getRound() - 1, 1.8) + (data.getRound() - 1) * 2);
             roundOver = false;
             enemyType = "R";
         }
     }
 
-    //Bosses should give much more loot than a regular enemy
-    //They should also deal more damage to the base
     private void createBossWave()
     {
         enemiesSpawned = 0;
         enemyTicker = 1;
         numEnemies = 1;
-        enemyHealth = 525 + (int) (Math.pow(data.getRound(), 2.25) + (data.getRound()) * 4);
+        enemyHealth = 525 + (int) (Math.pow(data.getRound(), 2.45) + (data.getRound()) * 3);
         roundOver = false;
         enemyType = "B";
     }
@@ -244,14 +261,7 @@ public class MapComponent extends JComponent
         {
             roundOver = true;
             //Get money for finishing a round?
-            if(data.getRound() % 10 == 0)
-            {
-                data.incrementMoney(130 + (data.getRound()) * 2);
-            }
-            else
-            {
-                data.incrementMoney(50 + (data.getRound() - 1) * 2);
-            }
+            data.incrementMoney(50 + (data.getRound() - 1) * 3);
             repaint();
         }
     }
@@ -279,10 +289,15 @@ public class MapComponent extends JComponent
             speed = t.getSpeed();
             level = t.getUpgradeLevel();
             
-            if(t.getUpgradeLevel() == 4)
+            if(t.getUpgradeLevel() == 4 && t.canCombine())
             {
-                upgrade = t.getUpgradeCost();
-                info = String.format("Sell Value: $%d   Upgrade Cost: N/A   Attack: %d   Range: %d   Speed: %d   Level: %d"
+                info = String.format("Sell Value: $%d   Combination Cost: $2000   Attack: %d   Range: %d   Speed: %d   Level: %d"
+                        , sell, attack, range, speed, level);
+            }
+
+            else if(t.getUpgradeLevel() == 4 && !t.canCombine())
+            {
+                info = String.format("Sell Value: $%d   Combination Cost: N/A   Attack: %d   Range: %d   Speed: %d   Level: %d"
                         , sell, attack, range, speed, level);
             }
             
@@ -338,6 +353,9 @@ public class MapComponent extends JComponent
                 {
                     data.decrementMoney(t.getUpgradeCost());
                     t.upgrade();
+                    t.setIsSelected(true);
+                    previousTower = t;
+                    repaint();
                 }
 
                 if(roundOver)
@@ -357,14 +375,14 @@ public class MapComponent extends JComponent
             //Do you have enough money?
             //Is the tower fully upgraded?
             //Can the tower actually combine?
-            //Is the tower the same type as the one to combine?
-            if(1500 <= data.getMoney() 
+            //Is the tower the same type as the one to combine? This could be removed
+            if(2000 <= data.getMoney() 
                && t.getUpgradeLevel() == 4 
                && t.canCombine() 
                && t.getTowerType() != towerSelected.getTowerType())
             {
                 t.combineTower(towerSelected);
-                data.decrementMoney(1500);
+                data.decrementMoney(2000);
                 repaint();
             }
 

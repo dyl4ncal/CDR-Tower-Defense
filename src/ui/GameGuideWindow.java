@@ -25,7 +25,7 @@ public class GameGuideWindow extends JFrame
         //Set the icon image
         try
         {
-            ImageIcon img = new ImageIcon("icon.png");
+            ImageIcon img = new ImageIcon("images/icon.png");
             frame.setIconImage(img.getImage());
         }
         catch(Exception e){}
@@ -34,7 +34,7 @@ public class GameGuideWindow extends JFrame
         createPanels();
 
         //Can adjust the size
-        frame.setSize(640, 480);
+        frame.setSize(650, 500);
         frame.setTitle("Game Guide");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -71,7 +71,7 @@ public class GameGuideWindow extends JFrame
                 + "the computer's motherboard. If enemies reach the CPU, it will take damage." + "<br />" +
         "<br />4.) Buy towers from the right panel and place them on the circuit board by clicking a "
                 + "tower type and then clicking where you want it located."
-                + "Defeat enemies to generate more $$$" + "<br />" +
+                + "Defeat enemies and complete rounds to generate more $$$" + "<br />" +
         "<br />5.) If you are confident that the CPU is well protected and don't need to carefully plan "
                 + "anymore defensive moves, there is a 'Faster' button which replaces 'Play' to speed up enemies." + "<br />" +
         "<br />6.) On the tower panel will be 3 options: 'Select', 'Sell', and 'Upgrade' " +

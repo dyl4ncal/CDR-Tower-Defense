@@ -150,7 +150,7 @@ public class Tower extends Tile
                 cost = 150;
                 attack = 5;
                 range = 3;
-                speed = 3;
+                speed = 4;
                 break;
             }
         }
@@ -190,7 +190,7 @@ public class Tower extends Tile
             {
                 Color[] colorArray = {Color.ORANGE, new Color(255, 142, 32), new Color(255, 77, 0)};
                 myColor = colorArray[upgradeLevel - 1]; //new Color(255, 50, 0);
-                attack += 4;
+                attack += 5;
                 sellValue += cost * upgradeLevel;
                 break;
             }
@@ -199,16 +199,7 @@ public class Tower extends Tile
             {
                 Color[] colorArray = {new Color(255, 0, 80), new Color(204, 0, 102), new Color(153, 0, 153)};
                 myColor = colorArray[upgradeLevel - 1];
-                attack += 8;
-                sellValue += cost * upgradeLevel;
-                break;
-            }
-
-            case SPEED:
-            {
-                Color[] colorArray = {Color.LIGHT_GRAY, Color.GRAY, Color.DARK_GRAY};
-                myColor = colorArray[upgradeLevel - 1];
-                attack += 2;
+                attack += 10;
                 sellValue += cost * upgradeLevel;
                 break;
             }
@@ -218,7 +209,16 @@ public class Tower extends Tile
                 Color[] colorArray = {Color.GREEN, new Color(0, 204, 0), new Color(0, 132, 0)};
                 myColor = colorArray[upgradeLevel - 1];
                 //new Color(0, 175, 0);
-                attack += 4;
+                attack += 5;
+                sellValue += cost * upgradeLevel;
+                break;
+            }
+
+            case SPEED:
+            {
+                Color[] colorArray = {Color.LIGHT_GRAY, Color.GRAY, Color.DARK_GRAY};
+                myColor = colorArray[upgradeLevel - 1];
+                attack += 3;
                 sellValue += cost * upgradeLevel;
                 break;
             }
@@ -236,7 +236,7 @@ public class Tower extends Tile
             {
                 Color[] colorArray = {Color.ORANGE, new Color(255, 142, 32), new Color(255, 77, 0)};
                 myColor = colorArray[upgradeLevel - 1];
-                attack += 4;
+                attack += 5;
                 sellValue += cost * upgradeLevel;
                 break;
             }
@@ -244,6 +244,7 @@ public class Tower extends Tile
         upgradeLevel++;
     }
 
+    //This method combines an existing tower with another tower
     public void combineTower(Tower t)
     {
         canCombine = false;
@@ -262,9 +263,9 @@ public class Tower extends Tile
             speed = t.getSpeed();
         }
 
-        //To get accurate sell values
+        //To get accurate sell and upgrade values
         cost = t.getCost();
-        sellValue += 1500;
+        sellValue += 2000;
         //Set upgrade level back to 1
         upgradeLevel = 1;
         secondColor = myColor;
@@ -284,19 +285,30 @@ public class Tower extends Tile
         int loot = 0;
         if (attackTicker == speed)
         {
-            attackTicker = 1;
+            attackTicker = 0;
             for (int i = 0; i < enemyList.size(); i++)
             {
                 EnemyComponent e = enemyList.get(i);
-                if (e.getX() >= getX() - range
-                 && e.getX() <= getX() + range
-                 && e.getY() >= getY() - range 
-                 && e.getY() <= getY() + range)
+                //I think I solved the issue
+                //Tested it and it looks fine
+                if (e.getXPosition() + 45 >= (getX() * 50) - (range * 50)
+                 && e.getXPosition() - 45 <= (getX() * 50) + (range * 50)
+                 && e.getYPosition() + 45 >= (getY() * 50) - (range * 50)
+                 && e.getYPosition() - 45 <= (getY() * 50) + (range * 50) )
                 {
                     e.decrementHealth(attack);
                     if (!e.isAlive())
                     {
-                        loot += 8;
+                        if(e.getType().equals("B"))
+                        {
+                            loot += 90;
+                        }
+
+                        else
+                        {
+                            loot += 8;
+                        }
+
                         enemyList.remove(i);
                         i--;
                     }

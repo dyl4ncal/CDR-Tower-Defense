@@ -11,9 +11,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import static entities.Path.Direction.*;
-import static entities.Tile.TileType.PATH;
-import static entities.Tile.TileType.TILE;
-import static entities.Tile.TileType.TOWER;
+import static entities.Tile.TileType.*;
+
 
 public class MapData
 {
@@ -24,7 +23,7 @@ public class MapData
     private int round = 0;
     private int numEnemies = 0;
     private int spawnInterval = 10;
-    private int health = 50;
+    private int health = 100;
     private int money = 500;
     private boolean healthChanged = false;
     private boolean moneyChanged = false;
@@ -59,9 +58,9 @@ public class MapData
     public int getSpawnInterval(){return spawnInterval;}
     public int getHealth() {return health;}
 
-    public void decrementHealth()
+    public void decrementHealth(int i)
     {
-        health--;
+        health -= i;
         healthChanged = true;
     }
 

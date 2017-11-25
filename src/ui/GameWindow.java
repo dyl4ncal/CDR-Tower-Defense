@@ -9,6 +9,7 @@ import java.awt.*;
 import entities.Tower;
 import graphics.*;
 import entities.MapData;
+import music.*;
 
 /**
  * This class is for creating the game window and putting the mapComponent and side bars
@@ -19,14 +20,14 @@ import entities.MapData;
 
 public class GameWindow extends JFrame
 {
-
+    private BackGroundMusic bgm;
     private JFrame frame;
     private JPanel mapPanel, towerPanel, textPanel;
     private JLabel healthLabel, healthNumLabel; 
     private JLabel moneyLabel, moneyNumLabel;
     private JLabel roundLabel, roundNumLabel;
     private JLabel textBox, description;
-    private JButton playButton, mainMenuButton;
+    private JButton playButton, mainMenuButton, musicButton;
     private JList towerList;
     private JScrollPane towerScroller;
     private MapComponent mapComponent;
@@ -42,7 +43,7 @@ public class GameWindow extends JFrame
         //Set the icon image
         try
         {
-            ImageIcon img = new ImageIcon("icon.png");
+            ImageIcon img = new ImageIcon("images/icon.png");
             frame.setIconImage(img.getImage());
         }
         catch(Exception e){}
@@ -74,6 +75,13 @@ public class GameWindow extends JFrame
         //Create gameClock and associated listener
         createClock();
         gameClock.start();
+
+        try
+        {
+            bgm = new BackGroundMusic();
+            bgm.play();
+        }
+        catch(Exception e){}
     }
 
     private void createPanels()
@@ -85,6 +93,7 @@ public class GameWindow extends JFrame
         //Create and add components to mapPanel
         createMapComponent();
         mapPanel.add(mapComponent);
+        mapPanel.setBackground(new Color(16,16,16));
 
         //Make towerPanel
         towerPanel = new JPanel();
@@ -105,6 +114,7 @@ public class GameWindow extends JFrame
         towerPanel.add(towerScroller, BorderLayout.CENTER);
         createButtons();
         towerPanel.add(playButton, BorderLayout.PAGE_END);
+        towerPanel.add(musicButton, BorderLayout.PAGE_END);
         towerPanel.add(mainMenuButton, BorderLayout.PAGE_END);
 
         //Make textPanel
@@ -172,12 +182,12 @@ public class GameWindow extends JFrame
         roundNumLabel = createNumLabel("%d", data.getRound(), Color.ORANGE);
 
         //Text panel label
-        String info = "Description of option selected";
+        String info = "Tower attributes";
         textBox = new JLabel(info);
         textBox.setForeground(Color.ORANGE);
         textBox.setBackground(Color.DARK_GRAY);
 
-        String des = "Tower attributes";
+        String des = "Description of option selected";
         description = new JLabel(des);
         description.setForeground(Color.ORANGE);
         description.setBackground(Color.DARK_GRAY);
@@ -228,12 +238,39 @@ public class GameWindow extends JFrame
             public void actionPerformed(ActionEvent arg0)
             {
                 //Start a new round based on currentRound
-                gameClock.stop(); // ??
+                gameClock.stop();
+                bgm.stop();
                 frame.dispose();
                 new TitleWindow();
             }
         });
 
+        musicButton = new JButton("Music OFF");
+        musicButton.setMinimumSize(new Dimension(300, 25));
+        musicButton.setMaximumSize(new Dimension(300, 25));
+        musicButton.setAlignmentX(CENTER_ALIGNMENT);
+
+        musicButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent arg0)
+            {
+                if(musicButton.getText().equals("Music OFF"))
+                {
+                    bgm.stop();
+                    musicButton.setText("Music ON");
+                }
+
+                else
+                {
+                    try
+                    {
+                        bgm.play();
+                        musicButton.setText("Music OFF");
+                    }
+                    catch(Exception e){}
+                }
+            }
+        });
     }
 
     private void createList()
@@ -278,7 +315,7 @@ public class GameWindow extends JFrame
                     case "Upgrade":
                     {
                         des = "Upgrades = tower's initial cost * upgrade level";
-                        info = "Attack value increase  Basic: 4  Melee: 8  Sniper: 4  Speed: 2  Splash: 2";
+                        info = "Attack value increase  Basic: 5  Melee: 10  Sniper: 5  Speed: 3  Splash: 2";
                         break;
                     }
 
@@ -337,7 +374,7 @@ public class GameWindow extends JFrame
                         attack = t.getAttack();
                         range = t.getRange();
                         speed = t.getSpeed();
-                        des = "Tower that hits all enemies in its range with a low attack, small range, but slow fire rate";
+                        des = "Tower that hits all enemies in its range with a low attack, small range, but very slow fire rate";
                         info = String.format("Cost: $%d   Attack: %d   Range: %d   Speed: %d", cost, attack, range, speed);
                         break;
                     }
@@ -377,10 +414,11 @@ public class GameWindow extends JFrame
                 }
 
                 //Creates the game over window pop up
-                if(data.getHealth() == 0)
+                if(data.getHealth() <= 0)
                 {
-                    new GameOverWindow(data);
+                    new GameOverWindow(data.getRound());
                     gameClock.stop();
+                    bgm.stop();
                     frame.dispose();
                 }
             }

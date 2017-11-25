@@ -13,9 +13,13 @@ import javax.swing.JComponent;
 import java.lang.Math;
 
 import entities.Path;
+import music.DeathSound;
 
 public class EnemyComponent extends JComponent
 {   
+    public static final int WIDTH = 30;
+    public static final int HEIGHT = 30;
+    private DeathSound oof;
     private int x = 0;
     private int y = 0;
     private int moveTicker = 0;
@@ -38,19 +42,28 @@ public class EnemyComponent extends JComponent
         lastDir = currentDir;
         setCoords();
         myType = t;
+        //Creates a 
+        try
+        {
+            oof = new DeathSound();
+        }
+        catch(Exception e){}
     }
 
     @Override
     public int getX() {return x / 50;}
     @Override
     public int getY() {return y / 50;}
+    public int getXPosition(){return x;}
+    public int getYPosition(){return y;}
+    
     public boolean isAlive() {return isAlive;}
     public String getType(){return myType;}
 
     public void draw(Graphics2D g2)
     {
         //As of right now, an enemy will be a circle in the center of the path
-        Ellipse2D.Double e = new Ellipse2D.Double(x + 10, y + 10, 30, 30);
+        Ellipse2D.Double e = new Ellipse2D.Double(x + 10, y + 10, WIDTH, HEIGHT);
         if(myType.equals("B"))
         {
             g2.setColor(new Color(Color.HSBtoRGB(hue, saturation, brightness)));
@@ -193,10 +206,17 @@ public class EnemyComponent extends JComponent
         {
             myHealth -= x;
         }
+
         else
         {
             myHealth = 0;
             isAlive = false;
+            //Play sound file
+            try
+            {
+                oof.play();
+            }
+            catch(Exception exp){}
         }
     }
 }

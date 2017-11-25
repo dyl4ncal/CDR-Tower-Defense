@@ -3,6 +3,7 @@ package ui;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
+import java.io.File;
 
 import entities.MapData;
 
@@ -28,7 +29,7 @@ public class TitleWindow extends JFrame
         //Set the icon image
         try
         {
-            ImageIcon img = new ImageIcon("icon.png");
+            ImageIcon img = new ImageIcon("images/icon.png");
             frame.setIconImage(img.getImage());
         }
         catch(Exception e){}
@@ -74,10 +75,17 @@ public class TitleWindow extends JFrame
             {
                 //Sends the MapComponent Data over to the game menu
                 String selected = (String) mapSelection.getSelectedItem();
-                selected += ".txt";
-                MapData mapData = new MapData(selected);
-                new GameWindow(mapData);
-                frame.dispose();
+                selected = "maps/" + selected + ".txt";
+                try
+                {
+                    MapData mapData = new MapData(selected);
+                    new GameWindow(mapData);
+                    frame.dispose();
+                }
+                catch(Exception e)
+                {
+                    JOptionPane.showMessageDialog(null, e.getMessage());
+                }
             }
         });
 
@@ -107,7 +115,12 @@ public class TitleWindow extends JFrame
         title.setFont(new Font(title.getFont().getName(), Font.ITALIC, 40));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        String[] maps = {"Map1", "Map2", "Map3", "Map4", "Map5"};
+        File dir = new File("maps/");
+        String[] maps = dir.list();
+        for(int i = 0; i < maps.length; i++)
+        {
+            maps[i] = maps[i].split("\\.")[0];
+        }
         mapSelection = new JComboBox(maps);
         mapSelection.setSelectedIndex(0);
         mapSelection.setMinimumSize(new Dimension(100, 20));
