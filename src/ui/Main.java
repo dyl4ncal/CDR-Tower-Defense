@@ -1,7 +1,7 @@
 /**
  * This class is simply used for running the game.
  *
- * @author Dylan & Raymond & Colton
+ * @authors Dylan, Raymond & Colton.
  */
 
 package ui;

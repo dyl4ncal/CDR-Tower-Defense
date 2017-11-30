@@ -1,6 +1,6 @@
 /**
  * This class represents the graphical component of the map and
- * controls the creation/deletion/modification of enemies and tiles
+ * controls the creation/deletion/modification of enemies and tiles.
  */
 
 package graphics;
@@ -41,6 +41,7 @@ public class MapComponent extends JComponent
 
     public static BufferedImage getBaseImage() {return baseImage;}
 
+    //Constructor for MapComponent class.
     public MapComponent(MapData d)
     {
         data = d;
@@ -113,6 +114,7 @@ public class MapComponent extends JComponent
         }
     }
 
+    //Logic to move the group of enemies.
     private void moveEnemies()
     {
         for(int i = 0; i < enemyList.size();)
@@ -146,13 +148,13 @@ public class MapComponent extends JComponent
         }
     }
 
-    //This method creates a new wave of enemies depending on current round
+    //This method creates a new wave of enemies depending on the current round.
     public void createWave()
     {
         enemiesSpawned = 0;
         enemyTicker = 1;
 
-        //Boss wave
+        //Boss wave.
         if(data.getRound() % BOSS_ROUNDS == 0)
         {
             numEnemies = 1;
@@ -160,7 +162,7 @@ public class MapComponent extends JComponent
             enemyType = "B";
         }
 
-        //Normal enemy wave
+        //Normal enemy wave.
         else
         {
             numEnemies = 8 + ((data.getRound() - 1) * 5 / 2);
@@ -171,13 +173,13 @@ public class MapComponent extends JComponent
         data.setRoundOver(false);
     }
 
-    //Draws all the enemies on the map
+    //Draws all the enemies on the map.
     private void drawEnemies(Graphics2D g2)
     {
-        //If enemyTicker = -1, all enemies have spawned
-        //If enemyTicker = 0, play hasn't been pressed
+        //If enemyTicker = -1, all enemies have spawned.
+        //If enemyTicker = 0, play hasn't been pressed.
         //enemiesSpawned is used so we can remove enemies from the list
-        //without making this method think it must spawn more
+        //without making this method think it must spawn more.
         if (!data.getRoundOver())
         {
             if (numEnemies != 0 && enemyTicker > 0 && (enemyTicker == SPAWN_INTERVAL || enemiesSpawned == 0))
@@ -218,7 +220,7 @@ public class MapComponent extends JComponent
             }
         }
 
-        //If there are no more enemies and all have spawned, the round is over
+        //If there are no more enemies and all have spawned, the round is over.
         if(enemyList.isEmpty() && enemiesSpawned == numEnemies)
         {
             data.setRoundOver(true);
@@ -227,6 +229,7 @@ public class MapComponent extends JComponent
         }
     }
 
+    //Logic for the "select tower" option. 
     public String selectTower(int y, int x)
     {
         Tile tileSelected = data.getTile(y, x);
@@ -260,12 +263,12 @@ public class MapComponent extends JComponent
         return info;
     }
 
-    //Use this method to buy, sell, upgrade, and combine tiles
+    //Use this method to buy, sell, upgrade, and combine towers.
     public void swapTile(String s, int y, int x)
     {
         Tile tileSelected = data.getTile(y, x);
 
-        if (s.equals("Sell")) //Sell a tower, return 1/4 of the cost to the player
+        if (s.equals("Sell")) //Sell a tower, return 1/4 of the cost to the player.
         {
             if(tileSelected.getTileType() == TOWER)
             {
@@ -278,13 +281,13 @@ public class MapComponent extends JComponent
                 repaint();
             }
         }
-        //Upgrades cannot go past level 4
+        //Upgrades cannot go past level 4.
         else if(s.equals("Upgrade"))
         {
-            //Check if selected tile is a tower and if you have enough money
+            //Check if selected tile is a tower and if you have enough money.
             if(tileSelected.getTileType() == TOWER)
             {
-                //Upgrade the tower
+                //Upgrade the tower.
                 Tower t = (Tower) tileSelected;
                 if(t.getUpgradeCost() <= data.getMoney() && t.getLevel() < 4)
                 {
@@ -299,7 +302,7 @@ public class MapComponent extends JComponent
             }
         }
 
-        //THIS IS THE PART THAT CHECKS IF YOU CAN COMBINE TOWERS
+        //THIS IS THE PART THAT CHECKS IF YOU CAN COMBINE TOWERS.
         else if(tileSelected.getTileType() == TOWER)
         {
             Tower t = (Tower) tileSelected;
@@ -318,7 +321,7 @@ public class MapComponent extends JComponent
             }
         }
 
-        else    //Buy a tower, decrement money by the cost
+        else    //Buy a tower, decrement money by the cost.
         {
             Tower towerSelected = new Tower(s, y, x);
             if (tileSelected.getTileType() == TILE && towerSelected.getCost() <= data.getMoney())
@@ -365,6 +368,7 @@ public class MapComponent extends JComponent
         drawRange((Graphics2D)getGraphics());
     }
 
+    //Draws the towers attack range indicator.
     private void drawRange(Graphics2D g2)
     {
         g2.setColor(Color.RED);

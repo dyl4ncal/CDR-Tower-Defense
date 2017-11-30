@@ -20,7 +20,7 @@ public class GameGuideWindow extends JFrame
     {
         frame = new JFrame();
 
-        //Set the icon image
+        //Set the icon image.
         try
         {
             ImageIcon img = new ImageIcon("images/icon.png");
@@ -31,7 +31,7 @@ public class GameGuideWindow extends JFrame
         createLabels();
         createPanels();
 
-        //Can adjust the size
+        //Can adjust the size of the game guide window.
         frame.setSize(650, 500);
         frame.setTitle("Game Guide");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -40,11 +40,10 @@ public class GameGuideWindow extends JFrame
         contentPane.add(guidePanel, BorderLayout.CENTER);
         frame.add(contentPane);
 
-        //frame.pack();
         frame.setResizable(false);
         frame.setVisible(true);
 
-        //This makes it appear in the center of the screen
+        //This makes it appear in the center of the screen.
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
     }
@@ -91,11 +90,11 @@ public class GameGuideWindow extends JFrame
         guidePanel = new JPanel();
         guidePanel.setLayout(new BoxLayout(guidePanel, BoxLayout.PAGE_AXIS));
 
-        //Add buttons and labels to the JPanels
+        //Add buttons and labels to the JPanels.
         guidePanel.add(title, BorderLayout.PAGE_START);
         guidePanel.add(this.guideInfo);
 
-        //Adds the title to the frame
+        //Adds the title to the frame.
         guidePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         guidePanel.setBackground(Color.DARK_GRAY);
     }

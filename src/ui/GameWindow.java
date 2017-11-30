@@ -1,6 +1,6 @@
 /**
- * This class is for creating the game window, mapComponent, and side bars
- * Basically, this is the class that has all the GUI components
+ * This class is for creating the game window, MapComponent, and side bars.
+ * Basically, this is the class that has all the GUI components.
  */
 
 package ui;
@@ -41,7 +41,7 @@ public class GameWindow extends JFrame
         data = md;
         frame = new JFrame();
 
-        //Set the icon image
+        //Set the icon image.
         try
         {
             ImageIcon img = new ImageIcon("images/icon.png");
@@ -49,15 +49,15 @@ public class GameWindow extends JFrame
         }
         catch(Exception e){}
 
-        //Set the specs of the game menu frame based on map data
+        //Set the specs of the game menu frame based on map data.
         frame.setSize(112 + (data.getNumCols() * 50), 90 + (data.getNumRows() * 50));
         frame.setTitle("CDR Tower Defense");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //Create contentPane
+        //Create contentPane.
         Container contentPane = getContentPane();
 
-        //Create and panels to contentPane
+        //Create and panels to contentPane.
         createPanels();
         contentPane.add(mapPanel, BorderLayout.CENTER);
         contentPane.add(textPanel, BorderLayout.PAGE_END);
@@ -67,11 +67,11 @@ public class GameWindow extends JFrame
         frame.setResizable(false);
         frame.setVisible(true);
 
-        //This makes it appear in the center of the screen
+        //This makes it appear in the center of the screen.
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 
-        //Create gameClock and associated listener
+        //Create gameClock and associated listener.
         createClock();
         gameClock.start();
 
@@ -85,23 +85,23 @@ public class GameWindow extends JFrame
 
     private void createPanels()
     {
-        //Make mapPanel
+        //Make mapPanel.
         mapPanel = new JPanel();
         mapPanel.setLayout(new BorderLayout());
 
-        //Create and add components to mapPanel
+        //Create and add components to mapPanel.
         createMapComponent();
         mapPanel.add(mapComponent);
         mapPanel.setBackground(new Color(16,16,16));
 
-        //Make towerPanel
+        //Make towerPanel.
         towerPanel = new JPanel();
         towerPanel.setPreferredSize(new Dimension(105, 500));
         towerPanel.setLayout(new BoxLayout(towerPanel, BoxLayout.PAGE_AXIS));
         towerPanel.setBackground(Color.DARK_GRAY);
         towerPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
 
-        //Create and add components to towerPanel
+        //Create and add components to towerPanel.
         createLabels();
         towerPanel.add(healthLabel, BorderLayout.PAGE_START);
         towerPanel.add(healthNumLabel, BorderLayout.PAGE_START);
@@ -117,7 +117,7 @@ public class GameWindow extends JFrame
         towerPanel.add(musicButton, BorderLayout.PAGE_END);
         towerPanel.add(mainMenuButton, BorderLayout.PAGE_END);
 
-        //Make textPanel
+        //Make textPanel.
         textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.PAGE_AXIS));
         textPanel.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
@@ -180,7 +180,7 @@ public class GameWindow extends JFrame
         roundLabel = createLabel("Round: ", Color.ORANGE);
         roundNumLabel = createNumLabel("%d", data.getRound(), Color.ORANGE);
 
-        //Text panel label
+        //Text panel label.
         String info = "Tower attributes";
         textBox = new JLabel(info);
         textBox.setForeground(Color.ORANGE);
@@ -198,14 +198,15 @@ public class GameWindow extends JFrame
         playButton.setMinimumSize(new Dimension(300, 25));
         playButton.setMaximumSize(new Dimension(300, 25));
 
-        //This puts the buttons at the bottom of the tower panel
+        //This puts the buttons at the bottom of the tower panel.
         playButton.setAlignmentX(CENTER_ALIGNMENT);
 
-        playButton.addActionListener(new ActionListener(){
+        playButton.addActionListener(new ActionListener()
+        {
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-                //Start a new round based on currentRound
+                //Start a new round based on currentRound.
                 if(playButton.getText().equals("Play") && data.getRoundOver())
                 {
                     data.incrementRound();
@@ -214,12 +215,12 @@ public class GameWindow extends JFrame
                     playButton.setText("Faster");
                     gameClock.setDelay(60);
                 }
-                else if(playButton.getText().equals("Slower"))  //Slow the game clock down
+                else if(playButton.getText().equals("Slower"))  //Slow the game clock down.
                 {
                     gameClock.setDelay(60);
                     playButton.setText("Faster");
                 }
-                else if(playButton.getText().equals("Faster"))  //Speed the game clock back up
+                else if(playButton.getText().equals("Faster"))  //Speed the game clock back up.
                 {
                     gameClock.setDelay(30);
                     playButton.setText("Slower");
@@ -232,11 +233,12 @@ public class GameWindow extends JFrame
         mainMenuButton.setMaximumSize(new Dimension(300, 25));
         mainMenuButton.setAlignmentX(CENTER_ALIGNMENT);
 
-        mainMenuButton.addActionListener(new ActionListener(){
+        mainMenuButton.addActionListener(new ActionListener()
+        {
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-                //Start a new round based on currentRound
+                //Start a new round based on currentRound.
                 gameClock.stop();
                 bgm.stop();
                 frame.dispose();
@@ -249,7 +251,8 @@ public class GameWindow extends JFrame
         musicButton.setMaximumSize(new Dimension(300, 25));
         musicButton.setAlignmentX(CENTER_ALIGNMENT);
 
-        musicButton.addActionListener(new ActionListener(){
+        musicButton.addActionListener(new ActionListener()
+        {
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
@@ -304,7 +307,7 @@ public class GameWindow extends JFrame
     private void createList()
     {
         DefaultListModel listModel = new DefaultListModel();
-        //This will check if theres a tower in the cell, if there is sell it
+        //This will check if there is a tower in the cell (if there is, sell it).
         //For half of it's original cost
         listModel.addElement("Select");
         listModel.addElement("Sell");
@@ -316,11 +319,11 @@ public class GameWindow extends JFrame
         listModel.addElement("Surge");
         towerList = new JList(listModel);
 
-        towerList.addListSelectionListener(new ListSelectionListener() {
+        towerList.addListSelectionListener(new ListSelectionListener()
+        {
             @Override
             public void valueChanged(ListSelectionEvent e)
             {
-                //Nothing yet
                 int cost, attack, range, speed;
                 String info = "";
                 String des = "";
@@ -418,7 +421,8 @@ public class GameWindow extends JFrame
 
     private void createClock()
     {
-        ActionListener taskPerformer = new ActionListener() {
+        ActionListener taskPerformer = new ActionListener()
+        {
             public void actionPerformed(ActionEvent evt)
             {
                 if(data.getRoundOver())
@@ -440,7 +444,7 @@ public class GameWindow extends JFrame
                     moneyNumLabel.setText(String.format("$%d", data.getMoney()));
                 }
 
-                //Creates the game over window pop up
+                //Creates the game over window pop up.
                 if(data.getHealth() <= 0)
                 {
                     new GameOverWindow(data.getRound());

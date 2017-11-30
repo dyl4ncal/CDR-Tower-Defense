@@ -1,5 +1,5 @@
 /**
- * This class is for creating the main menu screen
+ * This class is for creating the main menu screen.
  */
 
 package ui;
@@ -24,7 +24,7 @@ public class TitleWindow extends JFrame
     {
         frame = new JFrame();
 
-        //Set the icon image
+        //Set the icon image.
         try
         {
             ImageIcon img = new ImageIcon("images/icon.png");
@@ -36,7 +36,7 @@ public class TitleWindow extends JFrame
         createButtons();
         createPanels();
 
-        //Can adjust the size
+        //Can adjust the size.
         frame.setSize(500, 350);
         frame.setTitle("Main Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,11 +46,10 @@ public class TitleWindow extends JFrame
         contentPane.add(buttonPanel, BorderLayout.CENTER);
         frame.add(contentPane);
 
-        //frame.pack();
         frame.setResizable(false);
         frame.setVisible(true);
 
-        //This makes it appear in the center of the screen
+        //This makes it appear in the center of the screen.
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
     }
@@ -65,13 +64,13 @@ public class TitleWindow extends JFrame
         guideButton.setMinimumSize(new Dimension(100, 25));
         guideButton.setMaximumSize(new Dimension(100, 25));
 
-        //This will open up the game's window
+        //This will open up the game's window.
         startButton.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-                //Sends the MapComponent Data over to the game menu
+                //Sends the MapComponent data over to the game menu.
                 String selected = (String) mapSelection.getSelectedItem();
                 selected = "maps/" + selected + ".txt";
                 try
@@ -88,26 +87,26 @@ public class TitleWindow extends JFrame
         });
 
         //This will open up the game window using a saved file
-        //If we choose to do this option of course
+        //(if we choose to do this option of course)
         guideButton.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-                //Open the game over window
-                //Will open a real guide window later
+                //Open the game over window.
+                //Will open a real guide window later.
                 new GameGuideWindow();
             }
         });
 
-        //This puts the 2 buttons we currently have in the middle
+        //This puts the 2 buttons we currently have in the middle.
         startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         guideButton.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
 
     public void createLabels()
     {
-        //Creates the title label
+        //Creates the title label.
         title = new JLabel("CDR Tower Defense");
         title.setForeground(Color.CYAN);
         title.setFont(new Font(title.getFont().getName(), Font.ITALIC, 40));
@@ -134,14 +133,16 @@ public class TitleWindow extends JFrame
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.PAGE_AXIS));
     
         titlePanel.add(title, BorderLayout.PAGE_START);
-        //This puts the title slightly down from the top of the JFrame
+        
+        //This puts the title slightly down from the top of the JFrame.
         titlePanel.setBorder(BorderFactory.createEmptyBorder(35, 10, 50, 10));
         titlePanel.setBackground(Color.DARK_GRAY);
 
         buttonPanel.add(mapSelection);
         buttonPanel.add(startButton);
         buttonPanel.add(guideButton, BorderLayout.CENTER);
-        //This splits the buttons and the title
+        
+        //This splits the buttons and the title.
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(30, 10, 10, 10));
         buttonPanel.setBackground(Color.DARK_GRAY);
     }

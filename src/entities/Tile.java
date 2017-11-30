@@ -1,6 +1,6 @@
 /**
  * This is a base class for defining the x & y coordinates of locations on the map.
- * A standard tile.
+ * Defines a standard tile.
  */
 
 package entities;

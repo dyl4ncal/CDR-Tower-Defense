@@ -1,6 +1,6 @@
 /**
- * This class encapsulates graphical info for mapComponent to draw enemies
- * and other data for manipulation by tower
+ * This class encapsulates graphical information for MapComponent (to draw enemies
+ * and other data for manipulation by tower).
  */
 
 package graphics;
@@ -41,7 +41,8 @@ public class EnemyComponent extends JComponent
         lastDir = currentDir;
         setCoords();
         myType = t;
-        //Creates a 
+        
+        //Creates a sound on enemy death events. 
         try
         {
             oof = new DeathSound();
@@ -70,9 +71,10 @@ public class EnemyComponent extends JComponent
         }
     }
 
+    //Logic for drawing enemies.
     public void draw(Graphics2D g2)
     {
-        //As of right now, an enemy will be a circle in the center of the path
+        //An enemy is displayed as a circle in the center of the path.
         Ellipse2D.Double e = new Ellipse2D.Double(x + 10, y + 10, WIDTH, HEIGHT);
         if(myType.equals("B"))
         {
@@ -110,6 +112,7 @@ public class EnemyComponent extends JComponent
             }
     }
 
+    //Logic for enemy movement.
     public void move()
     {
         if (isAlive)
@@ -173,6 +176,7 @@ public class EnemyComponent extends JComponent
         }
     }
 
+    //Logic to decrement an enemies health value.
     public void decrementHealth(int x)
     {
         if (x < myHealth)
@@ -185,7 +189,7 @@ public class EnemyComponent extends JComponent
             myHealth = 0;
             isAlive = false;
 
-            //Play sound file
+            //Plays sound effects file.
             if(sfxOn)
             {
                 try
@@ -197,6 +201,7 @@ public class EnemyComponent extends JComponent
         }
     }
 
+    //Sets an enemies coordinates.
     private void setCoords()
     {
         x = currentLocation.getX() * 50;

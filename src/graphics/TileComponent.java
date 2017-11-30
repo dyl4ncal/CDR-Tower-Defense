@@ -1,5 +1,5 @@
 /**
- * This class stores all graphical info for a given tile
+ * This class stores all graphical information for a given tile.
  */
 
 package graphics;
@@ -35,19 +35,19 @@ public class TileComponent extends JComponent
                 break;
             }
             //If we decide to add more towers
-            //we check the tower type and draw the correct tower
+            //we check the tower type and draw the correct tower.
             case TOWER:
             {
                 Tower myTower = (Tower) myTile;
                 g2.setColor(myTower.getColor());
                 g2.fillRect(myX+7, myY+7, TILE_LENGTH -15, TILE_LENGTH -15);
-                //Surround the tower with a border
+                //Surround the tower with a border.
                 g2.setColor(Color.BLACK);
                 g2.drawRect(myX+7, myY+7, TILE_LENGTH -15, TILE_LENGTH -15);
                 
                 if(myTower.getSecondColor() != null)
                 {
-                    //Draw a tower inside the other tower around it
+                    //Draw a tower inside the other tower around it (for combining towers).
                     g2.setColor(myTower.getSecondColor());
                     g2.fillRect(myX+14, myY+14, TILE_LENGTH -28, TILE_LENGTH -28);
                     g2.setColor(Color.BLACK);
@@ -61,6 +61,7 @@ public class TileComponent extends JComponent
         }
     }
 
+    //Logic to draw the enemy path.
     public void drawPath(Graphics2D g2)
     {
         switch (myTile.getTileType())

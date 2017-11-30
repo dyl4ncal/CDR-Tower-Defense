@@ -1,6 +1,6 @@
 /**
- * This class generates the an array of tiles based on an input file
- * The data structure also holds info related to the state of the game
+ * This class generates an array of tiles based on an input data file.
+ * The data structure also holds info related to the state of the game.
  */
 
 package entities;
@@ -24,7 +24,8 @@ public class MapData
     private boolean moneyChanged = false;
     private boolean roundOver = true;
 
-    public MapData(String name) {buildTileMat(buildStringMat(name));}
+    //Constructor for MapData class.
+    public MapData(String name){buildTileMat(buildStringMat(name));}
 
     public Tile getTile(int y, int x) {return tileMat[y][x];}
     public void setTile(Tile newTile, int y, int x)
@@ -33,7 +34,7 @@ public class MapData
         Tile.TileType oldType = oldTile.getTileType();
         Tile.TileType newType = newTile.getTileType();
 
-        //Can place tower on empty square (buying) or empty square on tower (selling)
+        //Can place tower on empty square (buying), or clear a tower square (selling).
         if (newType != PATH && oldType != PATH &&
                 ((newType == TOWER && oldType == TILE) ||
                         (newType == TILE && oldType == TOWER)))
@@ -42,6 +43,7 @@ public class MapData
         }
     }
 
+    //Getters/Setters related to MapData.
     public Path getHead() {return pathHead;}
     public int getNumRows() {return tileMat.length;}
     public int getNumCols() {return tileMat[0].length;}
@@ -70,8 +72,13 @@ public class MapData
         }
         return false;
     }
+    
+    /*End of Getters & Setters.*/
 
-    public void incrementRound() {round++;}
+    public void incrementRound() 
+    {
+        round++;
+    }
 
     public void decrementHealth(int x)
     {
@@ -105,7 +112,7 @@ public class MapData
         ArrayList<String[]> lines = new ArrayList<>();
         String[][] stringMat;
 
-        //Make arraylist
+        //Make arraylist.
         while (in.hasNextLine())
         {
             lines.add(in.nextLine().split("\\s+"));
@@ -116,7 +123,7 @@ public class MapData
             throw new IllegalArgumentException("File is empty");
         }
 
-        //Check all rows are same length
+        //Check if all rows are same length.
         int numRows = lines.size();
         int numCols = lines.get(0).length;
         for (int i = 0; i < numRows; i++)
@@ -233,6 +240,7 @@ public class MapData
         }
     }
 
+    //Connects the path tiles via recursion.
     private Path connectPath(String[][] textGrid, int y, int x) throws IllegalArgumentException
     {
         if (y >= textGrid.length || y < 0 || x >= textGrid[0].length || x < 0)

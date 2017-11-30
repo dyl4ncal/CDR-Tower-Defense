@@ -1,6 +1,6 @@
 /**
- * JUnit 5 tests for MapData
- * Each tests that an exception is thrown given a specific problem with the input file
+ * JUnit: 11 tests for MapData.
+ * Each tests that an exception is thrown given a specific problem with the input file.
  * The map is a 2x2
  *
  * |------|
@@ -24,77 +24,77 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class MapDataTest
 {
     @Test
-    public void constructorTest1() throws IOException //Start isn't given a direction
+    public void constructorTest1() throws IOException //Example: Start isn't given a direction.
     {
         Executable closure = () -> getTestData("S D\nO E");
         assertThrows(IllegalArgumentException.class, closure);
     }
 
     @Test
-    public void constructorTest2() throws IOException //Path not connected
+    public void constructorTest2() throws IOException //Example: Path not connected.
     {
         Executable closure = () -> getTestData("SR R\nO E");
         assertThrows(IllegalArgumentException.class, closure);
     }
 
     @Test
-    public void constructorTest3() throws IOException //2 starts
+    public void constructorTest3() throws IOException //Example: 2 starts.
     {
         Executable closure = () -> getTestData("SR D\nSR E");
         assertThrows(IllegalArgumentException.class, closure);
     }
 
     @Test
-    public void constructorTest4() throws IOException //2 ends
+    public void constructorTest4() throws IOException //Example: 2 ends.
     {
         Executable closure = () -> getTestData("SR D\nE E");
         assertThrows(IllegalArgumentException.class, closure);
     }
 
     @Test
-    public void constructorTest5() throws IOException //No start
+    public void constructorTest5() throws IOException //Example: No start.
     {
         Executable closure = () -> getTestData("O D\nO E");
         assertThrows(IllegalArgumentException.class, closure);
     }
 
     @Test
-    public void constructorTest6() throws IOException //No end
+    public void constructorTest6() throws IOException //Example: No end.
     {
         Executable closure = () -> getTestData("SR D\nO D");
         assertThrows(IllegalArgumentException.class, closure);
     }
 
     @Test
-    public void constructorTest7() throws IOException //Start has invalid direction
+    public void constructorTest7() throws IOException //Example: Start has invalid direction.
     {
         Executable closure = () -> getTestData("SA D\nO E");
         assertThrows(IllegalArgumentException.class, closure);
     }
 
     @Test
-    public void constructorTest8() throws IOException //2 char token that isn't start
+    public void constructorTest8() throws IOException //Example: 2 char token that isn't start.
     {
         Executable closure = () -> getTestData("SR D\nAA D");
         assertThrows(IllegalArgumentException.class, closure);
     }
 
     @Test
-    public void constructorTest9() throws IOException //more than 2 char token
+    public void constructorTest9() throws IOException //Example: More than 2 char token.
     {
         Executable closure = () -> getTestData("SR D\nAAA D");
         assertThrows(IllegalArgumentException.class, closure);
     }
 
     @Test
-    public void constructorTest10() throws IOException //unequal rows
+    public void constructorTest10() throws IOException //Example: Unequal rows.
     {
         Executable closure = () -> getTestData("SR D\nO D O");
         assertThrows(IllegalArgumentException.class, closure);
     }
 
     @Test
-    public void constructorTest11() throws IOException //Empty file
+    public void constructorTest11() throws IOException //Example: Empty file.
     {
         Executable closure = () -> getTestData("");
         assertThrows(IllegalArgumentException.class, closure);

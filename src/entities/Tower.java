@@ -1,15 +1,16 @@
 /**
- * Tower class holds all the information about towers
- * Currently there are 5 tower types, each with different attributes
- * Able to combine 2 different tower types to make an even greater tower
- * This is my ranking system for the overall best combinations
- * Short description for each
- *
+ * Tower class holds all the information about towers.
+ * Currently there are 5 tower types, each with different attributes.
+ * Able to combine 2 different tower types to make an even greater tower.
+ * This is our ranking system for the overall best combinations.
+ * 
+ * Short description for each:
+ *--------------------------------------------------------------------------------
  * Antivirus tower combinations
  * #7 Antivirus and Firewall   -Kills bosses fairly fast
  * #2 Antivirus and Surge  -Good for Killing groups of enemies
  * #9 Antivirus and Quarantine  -A Quarantine tower with increased speed
- * #10 Antivirus and Encryption  -Only gives slights increases to speed and attack
+ * #10 Antivirus and Encryption  -Only gives slight increases to speed and attack
  *
  * Firewall tower combinations
  * #3 Firewall and Surge  -Kills enemies at close range quickly
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 
 public class Tower extends Tile
 {
+    //The possible tower types in CDR Tower Defense.
     public enum TowerType
     {
         ANTIVIRUS, FIREWALL, QUARANTINE, ENCRYPTION, SURGE,
@@ -41,9 +43,9 @@ public class Tower extends Tile
     private TowerType myType;
     private Color myColor;
     private Color[] colorArray;
-    private TowerType second = null; //The second tower's type
-    private Color secondColor; //The inside color
-    private Boolean canCombine = true; //Can only combine once
+    private TowerType second = null; //The second tower's type (for combining towers).
+    private Color secondColor; //The inside color (for combining towers).
+    private Boolean canCombine = true; //Can only combine once.
     private int cost;
     private int attackTicker = 1;
     private int range;
@@ -60,11 +62,11 @@ public class Tower extends Tile
         myX = x;
         myY = y;
 
-        //Set the attributes of the tower
-        //The speed may have to change relative to the clock/ticker
+        //Set the attributes of the tower.
+        //The speed may have to change relative to the clock/ticker.
         switch (type)
         {
-            //Hits from a fair distance, low amount of damage, low attack speed, cost is low
+            //Hits from a fair distance, low amount of damage, low attack speed, cost is low.
             case "Antivirus":
             {
                 myType = TowerType.ANTIVIRUS;
@@ -75,7 +77,7 @@ public class Tower extends Tile
                 attackIncrease = 5;
                 break;
             }
-            //Short range, high attack, moderate attack speed, cost is moderate
+            //Short range, high attack, moderate attack speed, cost is moderate.
             case "Firewall":
             {
                 myType = TowerType.FIREWALL;
@@ -86,7 +88,7 @@ public class Tower extends Tile
                 attackIncrease = 10;
                 break;
             }
-            //Highest range, moderate damage, slow attack speed, cost is moderately high
+            //Highest range, moderate damage, slow attack speed, cost is moderately high.
             case "Quarantine":
             {
                 myType = TowerType.QUARANTINE;
@@ -107,7 +109,7 @@ public class Tower extends Tile
                 attackIncrease = 3;
                 break;
             }
-            //Low range, low damage, slow attack speed, hits all in its radius, cost is high
+            //Low range, low damage, slow attack speed, hits all in its radius, cost is high.
             case "Surge":
             {
                 myType = TowerType.SURGE;
@@ -139,7 +141,9 @@ public class Tower extends Tile
     public int getSpeed(){return speed;}
     public int getSellValue(){return sellValue / 4;}
 
+    @Override
     public int getX(){return myX;}
+    @Override
     public int getY(){return myY;}
 
     //Upgrading a tower increases its attack by 1 or 2 (Surge is 1, rest are 2)
@@ -151,41 +155,42 @@ public class Tower extends Tile
         level++;
     }
 
-    //This method combines an existing tower with another tower
+    //This method combines an existing tower with another tower.
     public void combineTower(Tower t)
     {
         canCombine = false;
-        //Add the attack stats together
+        //Add the attack stats together.
         attack += t.getAttack();
 
-        //Check the ranges and pick the longer one
+        //Check the ranges and pick the longer one.
         if(t.getRange() > range)
         {
             range = t.getRange();
         }
 
-        //Check the ranges and pick the shorter one
+        //Check the ranges and pick the shorter one.
         if(t.getSpeed() < speed)
         {
             speed = t.getSpeed();
         }
 
-        //To get accurate sell and upgrade values
+        //To get accurate sell and upgrade values.
         cost = t.getCost();
         sellValue += 2000;
 
-        //Set upgrade level back to 1
+        //Set upgrade level back to 1.
         level = 1;
 
-        //Set second to the current tower type
+        //Set second to the current tower type.
         second = myType;
         myType = t.getTowerType();
 
-        //Change color set
+        //Change color set.
         secondColor = myColor;
         setColors();
     }
 
+    //Logic for attacking enemies.
     public int attack(ArrayList<EnemyComponent> enemyList)
     {
         int loot = 0;
@@ -195,8 +200,8 @@ public class Tower extends Tile
             for (int i = 0; i < enemyList.size(); i++)
             {
                 EnemyComponent e = enemyList.get(i);
-                //I think I solved the issue
-                //Tested it and it looks fine
+
+                
                 if (e.getXPosition() + 45 >= (getX() * 50) - (range * 50)
                  && e.getXPosition() - 45 <= (getX() * 50) + (range * 50)
                  && e.getYPosition() + 45 >= (getY() * 50) - (range * 50)
@@ -234,6 +239,7 @@ public class Tower extends Tile
         return loot;
     }
 
+    //Logic for tower colors.
     private void setColors()
     {
         switch (myType)

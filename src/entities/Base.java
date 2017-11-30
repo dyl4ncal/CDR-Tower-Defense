@@ -1,5 +1,5 @@
 /**
- * This class represents the Base path, only has coords
+ * This class represents the Base path. It defines its coordinates.
  */
 
 package entities;
@@ -11,5 +11,9 @@ public class Base extends Path
         super(y, x, null, null);
     }
 
-    public TileType getTileType(){return TileType.BASE;}
+    @Override
+    public TileType getTileType()
+    {
+        return TileType.BASE;
+    }
 }

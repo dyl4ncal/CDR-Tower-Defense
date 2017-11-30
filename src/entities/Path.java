@@ -1,5 +1,6 @@
 /**
- * This class represents a Path tile, connects to another path and has direction
+ * This class represents a Path tile 
+ * (a tile connects to another path tile and has direction).
  */
 
 package entities;
