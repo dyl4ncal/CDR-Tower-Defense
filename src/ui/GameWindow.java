@@ -9,6 +9,7 @@ import entities.MapData;
 import entities.Tower;
 import graphics.MapComponent;
 import music.BackgroundMusic;
+import graphics.EnemyComponent;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -28,7 +29,7 @@ public class GameWindow extends JFrame
     private JLabel moneyLabel, moneyNumLabel;
     private JLabel roundLabel, roundNumLabel;
     private JLabel textBox, description;
-    private JButton playButton, mainMenuButton, musicButton;
+    private JButton playButton, mainMenuButton, musicButton, sfxButton;
     private JList towerList;
     private JScrollPane towerScroller;
     private MapComponent mapComponent;
@@ -112,6 +113,7 @@ public class GameWindow extends JFrame
         towerPanel.add(towerScroller, BorderLayout.CENTER);
         createButtons();
         towerPanel.add(playButton, BorderLayout.PAGE_END);
+        towerPanel.add(sfxButton, BorderLayout.PAGE_END);
         towerPanel.add(musicButton, BorderLayout.PAGE_END);
         towerPanel.add(mainMenuButton, BorderLayout.PAGE_END);
 
@@ -268,6 +270,35 @@ public class GameWindow extends JFrame
                 }
             }
         });
+
+
+        sfxButton = new JButton("SFX OFF");
+        sfxButton.setMinimumSize(new Dimension(300, 25));
+        sfxButton.setMaximumSize(new Dimension(300, 25));
+        sfxButton.setAlignmentX(CENTER_ALIGNMENT);
+
+        sfxButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent arg0)
+            {
+                if(sfxButton.getText().equals("SFX OFF"))
+                {
+                    EnemyComponent.changeSFX();
+                    sfxButton.setText("SFX ON");
+                }
+
+                else
+                {
+                    try
+                    {
+                        EnemyComponent.changeSFX();
+                        sfxButton.setText("SFX OFF");
+                    }
+                    catch(Exception e){}
+                }
+            }
+        });
+
     }
 
     private void createList()

@@ -28,7 +28,7 @@ public class EnemyComponent extends JComponent
     private int y = 0;
     private int moveTicker = 0;
     private int myHealth = 0;
-
+    public static boolean sfxOn = true;
     private float hue = 0;
     private final float SATURATION = 1;
     private final float BRIGHTNESS = 1;
@@ -58,6 +58,17 @@ public class EnemyComponent extends JComponent
     
     public boolean isAlive() {return isAlive;}
     public String getType(){return myType;}
+    public static void changeSFX()
+    {
+        if(sfxOn)
+        {
+            sfxOn = false;
+        }
+        else
+        {
+            sfxOn = true;
+        }
+    }
 
     public void draw(Graphics2D g2)
     {
@@ -175,11 +186,14 @@ public class EnemyComponent extends JComponent
             isAlive = false;
 
             //Play sound file
-            try
+            if(sfxOn)
             {
-                oof.play();
+                try
+                {
+                    oof.play();
+                }
+                catch(Exception exp){}
             }
-            catch(Exception exp){}
         }
     }
 

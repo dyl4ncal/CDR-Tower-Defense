@@ -69,13 +69,13 @@ public class GameGuideWindow extends JFrame
                 + "the computer's motherboard. If enemies reach the CPU, it will take damage." + "<br />" +
         "<br />4.) Buy towers from the right panel and place them on the circuit board by clicking a "
                 + "tower type and then clicking where you want it located."
-                + "Defeat enemies and complete rounds to generate more $$$" + "<br />" +
+                + " Defeat enemies and complete rounds to generate more $$$." + "<br />" +
         "<br />5.) If you are confident that the CPU is well protected and don't need to carefully plan "
-                + "anymore defensive moves, there is a 'Faster' button which replaces 'Play' to speed up enemies." + "<br />" +
-        "<br />6.) On the tower panel will be 3 options: 'Select', 'Sell', and 'Upgrade' " +
-         "'Select' shows all the attributes of a tower"+
-         "'Sell' will sell a tower for 1/4 the original cost * upgrades"+
-         "'Upgrade' will upgrade a tower at a certain price. Upgrade price can be checked with 'Select'"+"<br />" +
+                + "anymore defensive moves, there is a 'Faster' button (which replaces 'Play') to speed up enemies." + "<br />" +
+        "<br />6.) On the tower panel, there are 3 options: 'Select', 'Sell', and 'Upgrade'." +
+         " 'Select' shows all the attributes of a tower."+
+         " 'Sell' will sell a tower for 1/4 the (original cost * upgrades)."+
+         " 'Upgrade' will upgrade a tower for a certain price. Upgrade price can be checked with 'Select'."+"<br />" +
         "<br />7.) Goodluck! This computer system is depending on you!" + "<br />" +        
         "</html>";
                 
